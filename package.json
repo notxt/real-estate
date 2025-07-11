@@ -1,0 +1,23 @@
+{
+  "name": "real-estate",
+  "version": "1.0.0",
+  "description": "A toy real estate game/simulator to practice using with Claude Code",
+  "type": "module",
+  "scripts": {},
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@eslint/js": "^9.30.1",
+    "@playwright/test": "^1.54.1",
+    "@tsconfig/strictest": "^2.0.5",
+    "@typescript-eslint/eslint-plugin": "^8.36.0",
+    "@typescript-eslint/parser": "^8.36.0",
+    "eslint": "^9.30.1",
+    "prettier": "^3.6.2",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.36.0"
+  }
+}
