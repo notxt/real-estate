@@ -97,3 +97,11 @@ Rendering in realtime with turn based actions
 
 [Describe the testing strategy, frameworks used, and any special testing considerations]
 - Use playwright for testing and debugging
+
+## Development Workflow
+
+- Commit and push after completing each task
+
+## Pull Request Guidelines
+
+- PRs should be small and single purpose. Try to keep them under 20 files
