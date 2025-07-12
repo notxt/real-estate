@@ -6,21 +6,85 @@ test.describe('Real Estate Empire Homepage', () => {
     
     await expect(page).toHaveTitle('Real Estate Empire');
     
-    const header = page.locator('header h1');
-    await expect(header).toBeVisible();
-    await expect(header).toHaveText('Real Estate Empire');
+    // Check header bar structure
+    const headerBar = page.locator('.header-bar');
+    await expect(headerBar).toBeVisible();
     
-    const tagline = page.locator('header p');
-    await expect(tagline).toBeVisible();
-    await expect(tagline).toHaveText('Build your property development empire');
+    // Check player info is displayed
+    const playerName = page.locator('#player-name');
+    await expect(playerName).toBeVisible();
+    await expect(playerName).toHaveText('Property Mogul');
+    
+    // Check cash display
+    const cashDisplay = page.locator('#cash-amount');
+    await expect(cashDisplay).toBeVisible();
+    await expect(cashDisplay).toHaveText('100,000');
+    
+    // Check turn counter
+    const turnNumber = page.locator('#turn-number');
+    await expect(turnNumber).toBeVisible();
+    await expect(turnNumber).toHaveText('1');
   });
 
-  test('should display working message from main.js', async ({ page }) => {
+  test('should display game UI layout from main.js', async ({ page }) => {
     await page.goto('/');
     
+    // Check main game layout is visible
     const main = page.locator('main');
     await expect(main).toBeVisible();
-    await expect(main).toHaveText('working!');
+    
+    // Check central area with property grid placeholder
+    const centralArea = page.locator('.central-area');
+    await expect(centralArea).toBeVisible();
+    
+    const gridPlaceholder = page.locator('.grid-placeholder');
+    await expect(gridPlaceholder).toBeVisible();
+    await expect(gridPlaceholder).toContainText('Property Grid Coming Soon');
+    
+    // Check action panel
+    const actionPanel = page.locator('.action-panel');
+    await expect(actionPanel).toBeVisible();
+    
+    // Check property details section
+    const propertyDetails = page.locator('.property-details');
+    await expect(propertyDetails).toBeVisible();
+    await expect(propertyDetails).toContainText('Select a property to view details');
+  });
+
+  test('should have interactive action buttons', async ({ page }) => {
+    await page.goto('/');
+    
+    // Check that action buttons are present
+    const buyBtn = page.locator('#buy-btn');
+    const developBtn = page.locator('#develop-btn');
+    const sellBtn = page.locator('#sell-btn');
+    const passBtn = page.locator('#pass-btn');
+    const nextTurnBtn = page.locator('#next-turn-btn');
+    
+    await expect(buyBtn).toBeVisible();
+    await expect(developBtn).toBeVisible();
+    await expect(sellBtn).toBeVisible();
+    await expect(passBtn).toBeVisible();
+    await expect(nextTurnBtn).toBeVisible();
+    
+    // Check that some buttons are disabled initially (no property selected)
+    await expect(buyBtn).toBeDisabled();
+    await expect(developBtn).toBeDisabled();
+    await expect(sellBtn).toBeDisabled();
+    await expect(passBtn).toBeEnabled();
+    await expect(nextTurnBtn).toBeEnabled();
+  });
+
+  test('should update turn counter when next turn is clicked', async ({ page }) => {
+    await page.goto('/');
+    
+    const turnNumber = page.locator('#turn-number');
+    await expect(turnNumber).toHaveText('1');
+    
+    const nextTurnBtn = page.locator('#next-turn-btn');
+    await nextTurnBtn.click();
+    
+    await expect(turnNumber).toHaveText('2');
   });
 
   test('should have proper viewport responsiveness', async ({ page, viewport }) => {
@@ -29,24 +93,18 @@ test.describe('Real Estate Empire Homepage', () => {
     const main = page.locator('main');
     await expect(main).toBeVisible();
     
-    // Verify main element has proper styling
-    if (viewport && viewport.width < 768) {
-      await expect(main).toHaveCSS('padding', '32px');
-    }
+    const actionPanel = page.locator('.action-panel');
+    await expect(actionPanel).toBeVisible();
   });
 
   test('should load the main.js script', async ({ page }) => {
-    let scriptLoaded = false;
-    
-    page.on('console', msg => {
-      if (msg.type() === 'error' && msg.text().includes('main.js')) {
-        scriptLoaded = false;
-      }
-    });
-    
     await page.goto('/');
     
     const scriptTag = page.locator('script[src="js/main.js"]');
     await expect(scriptTag).toHaveAttribute('type', 'module');
+    
+    // Verify the UI was actually initialized by checking if elements are present
+    const headerBar = page.locator('.header-bar');
+    await expect(headerBar).toBeVisible();
   });
 });
