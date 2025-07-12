@@ -62,3 +62,10 @@ tail -f log/dev.log     # Server logs
 
 **After each task:** Commit and push changes
 **PR size:** Keep under 20 files, single purpose
+
+## Code Design Principles
+
+- Avoid generics if possible
+- Always show errors in the UI
+- Favor TypeScript types over interfaces
+- Use `const fn = () => {...}` rather than `function`
