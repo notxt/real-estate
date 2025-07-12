@@ -97,6 +97,8 @@ Rendering in realtime with turn based actions
 
 [Describe the testing strategy, frameworks used, and any special testing considerations]
 - Use playwright for testing and debugging
+- Playwright tests need to be fast
+- We only need to test in chrome
 
 ## Development Workflow
 

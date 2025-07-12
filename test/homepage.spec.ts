@@ -15,28 +15,24 @@ test.describe('Real Estate Empire Homepage', () => {
     await expect(tagline).toHaveText('Build your property development empire');
   });
 
-  test('should display the game container', async ({ page }) => {
+  test('should display working message from main.js', async ({ page }) => {
     await page.goto('/');
     
-    const gameContainer = page.locator('.game-container');
-    await expect(gameContainer).toBeVisible();
-    
-    const welcomeHeading = gameContainer.locator('h2');
-    await expect(welcomeHeading).toHaveText('Welcome to Real Estate Empire');
-    
-    const welcomeText = gameContainer.locator('p');
-    await expect(welcomeText).toContainText('Your journey to becoming a property mogul starts here');
+    const main = page.locator('main');
+    await expect(main).toBeVisible();
+    await expect(main).toHaveText('working!');
   });
 
   test('should have proper viewport responsiveness', async ({ page, viewport }) => {
     await page.goto('/');
     
-    if (viewport && viewport.width < 768) {
-      await expect(page.locator('main')).toHaveCSS('padding', '32px');
-    }
+    const main = page.locator('main');
+    await expect(main).toBeVisible();
     
-    const gameContainer = page.locator('.game-container');
-    await expect(gameContainer).toBeVisible();
+    // Verify main element has proper styling
+    if (viewport && viewport.width < 768) {
+      await expect(main).toHaveCSS('padding', '32px');
+    }
   });
 
   test('should load the main.js script', async ({ page }) => {
