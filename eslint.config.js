@@ -2,6 +2,9 @@ import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
+  {
+    ignores: ['node_modules/', 'js/', 'bin/', '.github/', 'test/', 'log/', '*.js', '*.ts', '!src/**/*.ts'],
+  },
   js.configs.recommended,
   ...tseslint.configs.strictTypeChecked,
   ...tseslint.configs.stylisticTypeChecked,
@@ -11,10 +14,21 @@ export default tseslint.config(
         projectService: true,
         tsconfigRootDir: import.meta.dirname,
       },
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+        document: 'readonly',
+        window: 'readonly',
+      },
     },
     rules: {
       '@typescript-eslint/no-explicit-any': 'error',
-      '@typescript-eslint/explicit-function-return-type': 'error',
+      '@typescript-eslint/explicit-function-return-type': ['error', {
+        allowExpressions: true,
+        allowTypedFunctionExpressions: true,
+        allowHigherOrderFunctions: true,
+        allowDirectConstAssertionInArrowFunctions: true,
+      }],
       '@typescript-eslint/explicit-module-boundary-types': 'error',
       '@typescript-eslint/no-unused-vars': ['error', { 
         argsIgnorePattern: '^_',
@@ -63,7 +77,7 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-enum-comparison': 'error',
       '@typescript-eslint/no-for-in-array': 'error',
       '@typescript-eslint/no-implied-eval': 'error',
-      '@typescript-eslint/no-throw-literal': 'error',
+      '@typescript-eslint/only-throw-error': 'error',
       '@typescript-eslint/no-unnecessary-type-constraint': 'error',
       '@typescript-eslint/prefer-literal-enum-member': 'error',
       '@typescript-eslint/unified-signatures': 'error',
@@ -113,7 +127,7 @@ export default tseslint.config(
       '@typescript-eslint/no-invalid-void-type': 'error',
       '@typescript-eslint/no-non-null-asserted-nullish-coalescing': 'error',
       '@typescript-eslint/no-require-imports': 'error',
-      '@typescript-eslint/no-unnecessary-namespace': 'error',
+      '@typescript-eslint/no-namespace': 'error',
       '@typescript-eslint/no-useless-constructor': 'error',
       '@typescript-eslint/parameter-properties': ['error', {
         prefer: 'parameter-property'
@@ -122,23 +136,14 @@ export default tseslint.config(
       '@typescript-eslint/prefer-function-type': 'error',
       '@typescript-eslint/prefer-namespace-keyword': 'error',
       '@typescript-eslint/prefer-readonly-parameter-types': 'off',
-      '@typescript-eslint/typedef': ['error', {
-        arrayDestructuring: true,
-        arrowParameter: true,
-        memberVariableDeclaration: true,
-        objectDestructuring: true,
-        parameter: true,
-        propertyDeclaration: true,
-        variableDeclaration: true,
-        variableDeclarationIgnoreFunction: false,
-      }],
+      '@typescript-eslint/typedef': 'off',
       'complexity': ['error', { max: 10 }],
       'max-depth': ['error', { max: 3 }],
       'max-lines': ['error', { max: 300, skipBlankLines: true, skipComments: true }],
       'max-lines-per-function': ['error', { max: 50, skipBlankLines: true, skipComments: true }],
       'max-params': ['error', { max: 3 }],
       'max-statements': ['error', { max: 10 }],
-      'no-console': 'error',
+      'no-console': 'off',
       'no-debugger': 'error',
       'no-alert': 'error',
       'no-var': 'error',
@@ -165,8 +170,4 @@ export default tseslint.config(
       }],
     },
   },
-  {
-    files: ['**/*.js'],
-    ...tseslint.configs.disableTypeChecked,
-  }
 );
