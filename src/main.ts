@@ -40,6 +40,7 @@ class GameUI {
 
     private initializeUI(): void {
         this.updateDisplay()
+        this.handleResize()
     }
 
     private updateDisplay(): void {
@@ -96,6 +97,7 @@ class GameUI {
         this.setupHeaderEventListeners()
         this.setupActionEventListeners()
         this.setupGridEventListeners()
+        this.setupResizeListener()
     }
 
     private setupHeaderEventListeners(): void {
@@ -149,6 +151,72 @@ class GameUI {
                 this.centerView()
             })
         }
+    }
+
+    private setupResizeListener(): void {
+        window.addEventListener("resize", () => {
+            this.handleResize()
+        })
+    }
+
+    private handleResize(): void {
+        const width = window.innerWidth
+        const height = window.innerHeight
+        
+        this.adjustLayoutForSize(width, height)
+        this.addActivityLog(`Window resized to ${width.toString()}x${height.toString()}`)
+    }
+
+    private adjustLayoutForSize(width: number, height: number): void {
+        this.adjustLayoutDirection(width)
+        this.adjustCompactMode(height)
+    }
+
+    private adjustLayoutDirection(width: number): void {
+        const main = document.querySelector("main")
+        if (main === null) {
+            return
+        }
+
+        if (width < 1024) {
+            main.style.flexDirection = "column"
+            this.updateElement("action-status", "Compact view - Select a property")
+        } else {
+            main.style.flexDirection = "row"
+            this.updateElement("action-status", this.getActionStatusText())
+        }
+    }
+
+    private adjustCompactMode(height: number): void {
+        if (height < 600) {
+            this.setCompactMode(true)
+        } else {
+            this.setCompactMode(false)
+        }
+    }
+
+    private setCompactMode(compact: boolean): void {
+        const panelSections = document.querySelectorAll(".panel-section")
+        panelSections.forEach((section) => {
+            const element = section as HTMLElement
+            if (compact) {
+                element.style.padding = "0.75rem"
+            } else {
+                element.style.padding = "1rem"
+            }
+        })
+
+        const actionButtons = document.querySelectorAll(".action-button")
+        actionButtons.forEach((button) => {
+            const element = button as HTMLElement
+            if (compact) {
+                element.style.padding = "0.375rem"
+                element.style.fontSize = "0.8rem"
+            } else {
+                element.style.padding = "0.5rem"
+                element.style.fontSize = "0.9rem"
+            }
+        })
     }
 
     private formatCurrency(amount: number): string {

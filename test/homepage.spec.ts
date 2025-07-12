@@ -87,7 +87,7 @@ test.describe('Real Estate Empire Homepage', () => {
     await expect(turnNumber).toHaveText('2');
   });
 
-  test('should have proper viewport responsiveness', async ({ page, viewport }) => {
+  test('should have proper viewport responsiveness', async ({ page }) => {
     await page.goto('/');
     
     const main = page.locator('main');
@@ -95,6 +95,31 @@ test.describe('Real Estate Empire Homepage', () => {
     
     const actionPanel = page.locator('.action-panel');
     await expect(actionPanel).toBeVisible();
+  });
+
+  test('should respond to window resize events', async ({ page }) => {
+    await page.goto('/');
+    
+    // Test initial layout
+    const main = page.locator('main');
+    await expect(main).toBeVisible();
+    
+    // Resize to small screen and check layout changes
+    await page.setViewportSize({ width: 800, height: 500 });
+    
+    // Give a moment for resize handler to execute
+    await page.waitForTimeout(100);
+    
+    // Check that activity log shows resize event
+    const activityLog = page.locator('#activity-log');
+    await expect(activityLog).toContainText('Window resized to 800x500');
+    
+    // Resize back to larger screen
+    await page.setViewportSize({ width: 1200, height: 700 });
+    await page.waitForTimeout(100);
+    
+    // Check that another resize event was logged
+    await expect(activityLog).toContainText('Window resized to 1200x700');
   });
 
   test('should load the main.js script', async ({ page }) => {
