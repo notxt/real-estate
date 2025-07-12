@@ -4,7 +4,7 @@
 TypeScript web game, single-page app with Node.js dev server. Setup complete, basic structure established.
 
 **Stack**: TypeScript → JavaScript, Node 24, HTML/CSS, Playwright (Chrome only)
-**Current state**: `src/main.ts` displays "working!" message in browser
+**Current state**: Game UI renders from `src/main.ts` with functional programming
 
 ## Essential Commands
 
@@ -39,7 +39,8 @@ tail -f log/dev.log     # Server logs
 **Critical rules:**
 - ESLint checks `src/` only with strictest TypeScript rules
 - No external libraries - web standards only
-- Functional programming, return errors (don't throw)
+- Functional programming only - use functions, not classes
+- Return errors (don't throw)
 - Singular directory names (`test/` not `tests/`)
 
 ## Must Know
@@ -49,8 +50,9 @@ tail -f log/dev.log     # Server logs
 2. Run dev server: `./bin/dev > log/dev.log 2>&1 &`
 
 **Current behavior:**
-- `main.ts` sets main element text to "working!"
-- Tests verify this "working!" text (not game-container)
+- `main.ts` renders full game UI with document fragments
+- Uses functional programming patterns throughout
+- CSS in external `style.css` with CSS Grid layout
 - ESLint will fail CI if src/ code doesn't pass
 
 **Testing:**

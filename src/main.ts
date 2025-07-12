@@ -16,280 +16,339 @@ type GameState = {
     activityLog: string[]
 }
 
-class GameUI {
-    private readonly state: GameState
+const createInitialState = (): GameState => ({
+    playerName: "Property Mogul",
+    cash: 100000,
+    turnNumber: 1,
+    currentPhase: "Planning Phase",
+    selectedProperty: null,
+    marketStatus: "Stable",
+    activityLog: [
+        "Game started - Welcome to Real Estate Empire!",
+        "Turn 1 - Your turn to make a move",
+        "Select a property to begin building your empire"
+    ]
+})
 
-    constructor() {
-        this.state = {
-            playerName: "Property Mogul",
-            cash: 100000,
-            turnNumber: 1,
-            currentPhase: "Planning Phase",
-            selectedProperty: null,
-            marketStatus: "Stable",
-            activityLog: [
-                "Game started - Welcome to Real Estate Empire!",
-                "Turn 1 - Your turn to make a move",
-                "Select a property to begin building your empire"
-            ]
-        }
-        
-        this.initializeUI()
-        this.setupEventListeners()
+const formatCurrency = (amount: number): string => {
+    return amount.toLocaleString()
+}
+
+const getActionStatusText = (state: GameState): string => {
+    if (state.selectedProperty) {
+        return `Property selected: ${state.selectedProperty.name}`
     }
+    return "Choose your next action"
+}
 
-    private initializeUI(): void {
-        this.updateDisplay()
-        this.handleResize()
+const addActivityLog = (state: GameState, message: string): GameState => {
+    const newLog = [message, ...state.activityLog].slice(0, 5)
+    return { ...state, activityLog: newLog }
+}
+
+const createElement = (tag: string, className?: string, content?: string): HTMLElement => {
+    const element = document.createElement(tag)
+    if (className) {
+        element.className = className
     }
-
-    private updateDisplay(): void {
-        this.updatePlayerInfo()
-        this.updateActivityLog()
-        this.updateActionButtons()
+    if (content) {
+        element.textContent = content
     }
+    return element
+}
 
-    private updatePlayerInfo(): void {
-        this.updateElement("player-name", this.state.playerName)
-        this.updateElement("cash-amount", this.formatCurrency(this.state.cash))
-        this.updateElement("turn-number", this.state.turnNumber.toString())
-        this.updateElement("phase-indicator", this.state.currentPhase)
-        this.updateElement("market-status", this.state.marketStatus)
-        this.updateElement("action-status", this.getActionStatusText())
+const createHeaderBar = (state: GameState): HTMLElement => {
+    const header = createElement("header", "header-bar")
+    
+    const headerLeft = createElement("div", "header-left")
+    const playerInfo = createElement("div", "player-info")
+    
+    const playerSpan = createElement("span")
+    playerSpan.innerHTML = `Player: <strong id="player-name">${state.playerName}</strong>`
+    
+    const cashDisplay = createElement("div", "cash-display")
+    cashDisplay.innerHTML = `Cash: $<span id="cash-amount">${formatCurrency(state.cash)}</span>`
+    
+    const turnCounter = createElement("div", "turn-counter")
+    turnCounter.innerHTML = `Turn: <span id="turn-number">${state.turnNumber.toString()}</span>`
+    
+    playerInfo.appendChild(playerSpan)
+    playerInfo.appendChild(cashDisplay)
+    playerInfo.appendChild(turnCounter)
+    headerLeft.appendChild(playerInfo)
+    
+    const headerRight = createElement("div", "header-right")
+    const settingsBtn = createElement("button", "header-button", "Settings") as HTMLButtonElement
+    settingsBtn.id = "settings-btn"
+    const helpBtn = createElement("button", "header-button", "Help") as HTMLButtonElement
+    helpBtn.id = "help-btn"
+    
+    headerRight.appendChild(settingsBtn)
+    headerRight.appendChild(helpBtn)
+    
+    header.appendChild(headerLeft)
+    header.appendChild(headerRight)
+    
+    return header
+}
+
+const createCentralArea = (): HTMLElement => {
+    const central = createElement("div", "central-area")
+    
+    const title = createElement("h2", undefined, "Property Grid")
+    
+    const gridPlaceholder = createElement("div", "grid-placeholder")
+    gridPlaceholder.innerHTML = `
+        <h3>Property Grid Coming Soon</h3>
+        <p>20x15 City Grid</p>
+        <small>Interactive property map will appear here</small>
+    `
+    
+    const gridControls = createElement("div", "grid-controls")
+    const zoomIn = createElement("button", "header-button", "Zoom In") as HTMLButtonElement
+    zoomIn.id = "zoom-in"
+    const zoomOut = createElement("button", "header-button", "Zoom Out") as HTMLButtonElement
+    zoomOut.id = "zoom-out"
+    const centerView = createElement("button", "header-button", "Center View") as HTMLButtonElement
+    centerView.id = "center-view"
+    
+    gridControls.appendChild(zoomIn)
+    gridControls.appendChild(zoomOut)
+    gridControls.appendChild(centerView)
+    
+    central.appendChild(title)
+    central.appendChild(gridPlaceholder)
+    central.appendChild(gridControls)
+    
+    return central
+}
+
+const createActionPanel = (state: GameState): HTMLElement => {
+    const actionPanel = createElement("div", "action-panel")
+    
+    const propertyDetails = createElement("div", "panel-section property-details")
+    propertyDetails.innerHTML = `
+        <h3>Property Details</h3>
+        <div class="property-placeholder" id="property-info">
+            Select a property to view details
+        </div>
+    `
+    
+    const actionsSection = createElement("div", "panel-section")
+    const actionsTitle = createElement("h3", undefined, "Available Actions")
+    const actionsList = createElement("ul", "actions-list")
+    
+    const actions = [
+        { id: "buy-btn", class: "buy", text: "Buy Property", disabled: true },
+        { id: "develop-btn", class: "develop", text: "Develop Property", disabled: true },
+        { id: "sell-btn", class: "sell", text: "Sell Property", disabled: true },
+        { id: "pass-btn", class: "pass", text: "Pass Turn", disabled: false }
+    ]
+    
+    actions.forEach(action => {
+        const li = createElement("li")
+        const button = createElement("button", `action-button ${action.class}`, action.text) as HTMLButtonElement
+        button.id = action.id
+        button.disabled = action.disabled
+        li.appendChild(button)
+        actionsList.appendChild(li)
+    })
+    
+    actionsSection.appendChild(actionsTitle)
+    actionsSection.appendChild(actionsList)
+    
+    const marketSection = createElement("div", "panel-section")
+    marketSection.innerHTML = `
+        <h3>Market Conditions</h3>
+        <div class="market-indicator">
+            <span>Market Status:</span>
+            <span class="market-status" id="market-status">${state.marketStatus}</span>
+        </div>
+    `
+    
+    const activitySection = createElement("div", "panel-section")
+    const activityTitle = createElement("h3", undefined, "Recent Activity")
+    const activityLog = createElement("div", "activity-log")
+    activityLog.id = "activity-log"
+    
+    state.activityLog.forEach(activity => {
+        const item = createElement("div", "activity-item", activity)
+        activityLog.appendChild(item)
+    })
+    
+    activitySection.appendChild(activityTitle)
+    activitySection.appendChild(activityLog)
+    
+    actionPanel.appendChild(propertyDetails)
+    actionPanel.appendChild(actionsSection)
+    actionPanel.appendChild(marketSection)
+    actionPanel.appendChild(activitySection)
+    
+    return actionPanel
+}
+
+const createFooterBar = (state: GameState): HTMLElement => {
+    const footer = createElement("footer", "footer-bar")
+    
+    const turnStatus = createElement("div", "turn-status")
+    const phaseIndicator = createElement("div", "phase-indicator", state.currentPhase)
+    phaseIndicator.id = "phase-indicator"
+    const actionStatus = createElement("span", undefined, getActionStatusText(state))
+    actionStatus.id = "action-status"
+    
+    turnStatus.appendChild(phaseIndicator)
+    turnStatus.appendChild(actionStatus)
+    
+    const nextTurnBtn = createElement("button", "next-turn-button", "Next Turn") as HTMLButtonElement
+    nextTurnBtn.id = "next-turn-btn"
+    
+    footer.appendChild(turnStatus)
+    footer.appendChild(nextTurnBtn)
+    
+    return footer
+}
+
+const createGameUI = (state: GameState): DocumentFragment => {
+    const fragment = document.createDocumentFragment()
+    
+    fragment.appendChild(createHeaderBar(state))
+    
+    const main = createElement("main")
+    main.appendChild(createCentralArea())
+    main.appendChild(createActionPanel(state))
+    fragment.appendChild(main)
+    
+    fragment.appendChild(createFooterBar(state))
+    
+    return fragment
+}
+
+const updateElement = (id: string, content: string): void => {
+    const element = document.getElementById(id)
+    if (element !== null) {
+        element.textContent = content
     }
+}
 
-    private updateElement(id: string, content: string): void {
-        const element = document.getElementById(id)
-        if (element !== null) {
-            element.textContent = content
-        }
+const updateActivityLog = (state: GameState): void => {
+    const activityLogEl = document.getElementById("activity-log")
+    if (activityLogEl !== null) {
+        activityLogEl.innerHTML = ""
+        state.activityLog.forEach(activity => {
+            const item = createElement("div", "activity-item", activity)
+            activityLogEl.appendChild(item)
+        })
     }
+}
 
-    private updateActivityLog(): void {
-        const activityLogEl = document.getElementById("activity-log")
-        if (activityLogEl !== null) {
-            activityLogEl.innerHTML = ""
-            this.state.activityLog.forEach(activity => {
-                const activityDiv = document.createElement("div")
-                activityDiv.className = "activity-item"
-                activityDiv.textContent = activity
-                activityLogEl.appendChild(activityDiv)
-            })
-        }
-    }
+const updateDisplay = (state: GameState): void => {
+    updateElement("player-name", state.playerName)
+    updateElement("cash-amount", formatCurrency(state.cash))
+    updateElement("turn-number", state.turnNumber.toString())
+    updateElement("phase-indicator", state.currentPhase)
+    updateElement("market-status", state.marketStatus)
+    updateElement("action-status", getActionStatusText(state))
+    updateActivityLog(state)
+}
 
-    private updateActionButtons(): void {
-        const hasSelection = this.state.selectedProperty !== null
-        this.updateButtonState("buy-btn", !hasSelection)
-        this.updateButtonState("develop-btn", !hasSelection)
-        this.updateButtonState("sell-btn", !hasSelection)
-        this.updateButtonState("next-turn-btn", false)
-    }
-
-    private updateButtonState(id: string, disabled: boolean): void {
-        const button = document.getElementById(id) as HTMLButtonElement | null
-        if (button !== null) {
-            button.disabled = disabled
-        }
-    }
-
-    private setupEventListeners(): void {
-        this.setupHeaderEventListeners()
-        this.setupActionEventListeners()
-        this.setupGridEventListeners()
-        this.setupResizeListener()
-    }
-
-    private setupHeaderEventListeners(): void {
-        const settingsBtn = document.getElementById("settings-btn")
-        const helpBtn = document.getElementById("help-btn")
-
-        if (settingsBtn !== null) {
-            settingsBtn.addEventListener("click", () => {
-                this.showSettings()
-            })
-        }
-        if (helpBtn !== null) {
-            helpBtn.addEventListener("click", () => {
-                this.showHelp()
-            })
-        }
-    }
-
-    private setupActionEventListeners(): void {
-        this.addClickListener("buy-btn", () => { this.buyProperty() })
-        this.addClickListener("develop-btn", () => { this.developProperty() })
-        this.addClickListener("sell-btn", () => { this.sellProperty() })
-        this.addClickListener("pass-btn", () => { this.passTurn() })
-        this.addClickListener("next-turn-btn", () => { this.nextTurn() })
-    }
-
-    private addClickListener(id: string, handler: () => void): void {
+const setupEventListeners = (state: GameState, updateState: (newState: GameState) => void): void => {
+    const addClickListener = (id: string, handler: () => void): void => {
         const element = document.getElementById(id)
         if (element !== null) {
             element.addEventListener("click", handler)
         }
     }
-
-    private setupGridEventListeners(): void {
-        const zoomInBtn = document.getElementById("zoom-in")
-        const zoomOutBtn = document.getElementById("zoom-out")
-        const centerViewBtn = document.getElementById("center-view")
-
-        if (zoomInBtn !== null) {
-            zoomInBtn.addEventListener("click", () => {
-                this.zoomIn()
-            })
+    
+    addClickListener("settings-btn", () => {
+        const newState = addActivityLog(state, "Settings panel opened")
+        updateState(newState)
+    })
+    
+    addClickListener("help-btn", () => {
+        const newState = addActivityLog(state, "Help documentation opened")
+        updateState(newState)
+    })
+    
+    addClickListener("buy-btn", () => {
+        const newState = addActivityLog(state, "Attempting to buy property...")
+        updateState(newState)
+    })
+    
+    addClickListener("develop-btn", () => {
+        if (state.selectedProperty) {
+            const newState = addActivityLog(state, `Developing ${state.selectedProperty.name}`)
+            updateState(newState)
         }
-        if (zoomOutBtn !== null) {
-            zoomOutBtn.addEventListener("click", () => {
-                this.zoomOut()
-            })
+    })
+    
+    addClickListener("sell-btn", () => {
+        if (state.selectedProperty) {
+            const newState = addActivityLog(state, `Selling ${state.selectedProperty.name}`)
+            updateState(newState)
         }
-        if (centerViewBtn !== null) {
-            centerViewBtn.addEventListener("click", () => {
-                this.centerView()
-            })
+    })
+    
+    addClickListener("pass-btn", () => {
+        const newState = addActivityLog(state, "Turn passed - no action taken")
+        const nextTurnState = {
+            ...newState,
+            turnNumber: newState.turnNumber + 1,
+            currentPhase: "Planning Phase"
         }
-    }
-
-    private setupResizeListener(): void {
-        window.addEventListener("resize", () => {
-            this.handleResize()
-        })
-    }
-
-    private handleResize(): void {
+        const finalState = addActivityLog(nextTurnState, `Turn ${nextTurnState.turnNumber} started`)
+        updateState(finalState)
+    })
+    
+    addClickListener("next-turn-btn", () => {
+        const newState = {
+            ...state,
+            turnNumber: state.turnNumber + 1,
+            currentPhase: "Planning Phase"
+        }
+        const finalState = addActivityLog(newState, `Turn ${newState.turnNumber} started`)
+        updateState(finalState)
+    })
+    
+    addClickListener("zoom-in", () => {
+        const newState = addActivityLog(state, "Zoomed in on property grid")
+        updateState(newState)
+    })
+    
+    addClickListener("zoom-out", () => {
+        const newState = addActivityLog(state, "Zoomed out on property grid")
+        updateState(newState)
+    })
+    
+    addClickListener("center-view", () => {
+        const newState = addActivityLog(state, "Centered view on property grid")
+        updateState(newState)
+    })
+    
+    window.addEventListener("resize", () => {
         const width = window.innerWidth
         const height = window.innerHeight
-        
-        this.adjustLayoutForSize(width, height)
-        this.addActivityLog(`Window resized to ${width.toString()}x${height.toString()}`)
-    }
-
-    private adjustLayoutForSize(width: number, height: number): void {
-        this.adjustLayoutDirection(width)
-        this.adjustCompactMode(height)
-    }
-
-    private adjustLayoutDirection(width: number): void {
-        const main = document.querySelector("main")
-        if (main === null) {
-            return
-        }
-
-        if (width < 1024) {
-            main.style.flexDirection = "column"
-            this.updateElement("action-status", "Compact view - Select a property")
-        } else {
-            main.style.flexDirection = "row"
-            this.updateElement("action-status", this.getActionStatusText())
-        }
-    }
-
-    private adjustCompactMode(height: number): void {
-        if (height < 600) {
-            this.setCompactMode(true)
-        } else {
-            this.setCompactMode(false)
-        }
-    }
-
-    private setCompactMode(compact: boolean): void {
-        const panelSections = document.querySelectorAll(".panel-section")
-        panelSections.forEach((section) => {
-            const element = section as HTMLElement
-            if (compact) {
-                element.style.padding = "0.75rem"
-            } else {
-                element.style.padding = "1rem"
-            }
-        })
-
-        const actionButtons = document.querySelectorAll(".action-button")
-        actionButtons.forEach((button) => {
-            const element = button as HTMLElement
-            if (compact) {
-                element.style.padding = "0.375rem"
-                element.style.fontSize = "0.8rem"
-            } else {
-                element.style.padding = "0.5rem"
-                element.style.fontSize = "0.9rem"
-            }
-        })
-    }
-
-    private formatCurrency(amount: number): string {
-        return amount.toLocaleString()
-    }
-
-    private getActionStatusText(): string {
-        if (this.state.selectedProperty) {
-            return `Property selected: ${this.state.selectedProperty.name}`
-        }
-        return "Choose your next action"
-    }
-
-    private addActivityLog(message: string): void {
-        this.state.activityLog.unshift(message)
-        if (this.state.activityLog.length > 5) {
-            this.state.activityLog = this.state.activityLog.slice(0, 5)
-        }
-        this.updateDisplay()
-    }
-
-    private showSettings(): void {
-        this.addActivityLog("Settings panel opened")
-    }
-
-    private showHelp(): void {
-        this.addActivityLog("Help documentation opened")
-    }
-
-    private buyProperty(): void {
-        this.addActivityLog("Attempting to buy property...")
-    }
-
-    private developProperty(): void {
-        if (this.state.selectedProperty) {
-            this.addActivityLog(`Developing ${this.state.selectedProperty.name}`)
-        }
-    }
-
-    private sellProperty(): void {
-        if (this.state.selectedProperty) {
-            this.addActivityLog(`Selling ${this.state.selectedProperty.name}`)
-        }
-    }
-
-    private passTurn(): void {
-        this.addActivityLog("Turn passed - no action taken")
-        this.nextTurn()
-    }
-
-    private nextTurn(): void {
-        this.state.turnNumber++
-        this.state.currentPhase = "Planning Phase"
-        this.addActivityLog(`Turn ${this.state.turnNumber.toString()} started`)
-        this.updateDisplay()
-    }
-
-    private zoomIn(): void {
-        this.addActivityLog("Zoomed in on property grid")
-    }
-
-    private zoomOut(): void {
-        this.addActivityLog("Zoomed out on property grid")
-    }
-
-    private centerView(): void {
-        this.addActivityLog("Centered view on property grid")
-    }
+        const newState = addActivityLog(state, `Window resized to ${width}x${height}`)
+        updateState(newState)
+    })
 }
 
-const main = document.querySelector("main")
-if (main === null) {
-    throw new Error("main element not found")
+const initializeGame = (): void => {
+    const app = document.getElementById("app")
+    if (app === null) {
+        throw new Error("app element not found")
+    }
+    
+    let gameState = createInitialState()
+    
+    const updateState = (newState: GameState): void => {
+        gameState = newState
+        updateDisplay(gameState)
+    }
+    
+    const ui = createGameUI(gameState)
+    app.appendChild(ui)
+    
+    setupEventListeners(gameState, updateState)
 }
 
-new GameUI()
+initializeGame()
