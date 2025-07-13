@@ -17,7 +17,7 @@ import {
     handleCenterViewClick,
     handleWindowResize
 } from './eventHandlers.js'
-import type { GameState, PropertyId } from './types.js'
+import type { GameState, PropertyId, Property } from './types.js'
 import { 
     createInitialGameState, 
     validateGameState, 
@@ -153,44 +153,51 @@ const setupEventListeners = (state: GameState, updateState: (newState: GameState
     })
 }
 
+// @GRID: Property grid cell creation helper
+const createGridCell = (property: Property, isSelected: boolean, handlePropertySelect: (propertyId: PropertyId) => void): HTMLElement => {
+    const cell = createElement("div", "grid-cell")
+    
+    cell.setAttribute('data-x', property.position.x.toString())
+    cell.setAttribute('data-y', property.position.y.toString())
+    cell.setAttribute('tabindex', '0')
+    cell.setAttribute('data-property-id', property.id)
+    cell.setAttribute('data-property-type', property.type)
+    cell.setAttribute('data-development-level', property.developmentLevel.toString())
+    
+    if (property.owner !== null) {
+        cell.setAttribute('data-owner', property.owner)
+    }
+    
+    if (isSelected) {
+        cell.classList.add('selected')
+    }
+    
+    cell.addEventListener('click', () => {
+        handlePropertySelect(property.id)
+    })
+    
+    return cell
+}
+
 // @GRID: Property grid update helper  
 const updatePropertyGrid = (gameState: GameState, handlePropertySelect: (propertyId: PropertyId) => void): void => {
     const gridElement = document.querySelector('.property-grid')
-    if (gridElement instanceof HTMLElement) {
-        // Simply recreate the grid content
-        gridElement.innerHTML = ''
-        
-        // Copy logic from createPropertyGrid
-        for (let y = 0; y < 15; y++) {
-            for (let x = 0; x < 20; x++) {
-                const property = gameState.properties.find(p => p.position.x === x && p.position.y === y)
-                if (property !== undefined) {
-                    const isSelected = gameState.selectedProperty?.id === property.id
-                    const cell = createElement("div", "grid-cell")
-                    
-                    cell.setAttribute('data-x', property.position.x.toString())
-                    cell.setAttribute('data-y', property.position.y.toString())
-                    cell.setAttribute('tabindex', '0')
-                    cell.setAttribute('data-property-id', property.id)
-                    cell.setAttribute('data-property-type', property.type)
-                    cell.setAttribute('data-development-level', property.developmentLevel.toString())
-                    
-                    if (property.owner !== null) {
-                        cell.setAttribute('data-owner', property.owner)
-                    }
-                    
-                    if (isSelected) {
-                        cell.classList.add('selected')
-                    }
-                    
-                    // Add event listeners
-                    cell.addEventListener('click', () => {
-                        handlePropertySelect(property.id)
-                    })
-                    
-                    gridElement.appendChild(cell)
-                }
+    if (!(gridElement instanceof HTMLElement)) {
+        return
+    }
+    
+    gridElement.innerHTML = ''
+    
+    for (let y = 0; y < 15; y++) {
+        for (let x = 0; x < 20; x++) {
+            const property = gameState.properties.find(p => p.position.x === x && p.position.y === y)
+            if (property === undefined) {
+                continue
             }
+            
+            const isSelected = gameState.selectedProperty?.id === property.id
+            const cell = createGridCell(property, isSelected, handlePropertySelect)
+            gridElement.appendChild(cell)
         }
     }
 }
