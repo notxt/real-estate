@@ -15,14 +15,14 @@ type HTMLElementTagNameMap = {
 
 export const createElement = <K extends keyof HTMLElementTagNameMap>(
     tag: K,
-    className?: string,
-    content?: string
+    className: string | null = null,
+    content: string | null = null
 ): HTMLElementTagNameMap[K] => {
     const element = document.createElement(tag) as HTMLElementTagNameMap[K]
-    if (className !== undefined) {
+    if (className !== null) {
         element.className = className
     }
-    if (content !== undefined) {
+    if (content !== null) {
         element.textContent = content
     }
     return element

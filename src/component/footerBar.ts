@@ -1,6 +1,8 @@
-import type { GameState } from '../main.js'
+// @FOOTER: Footer bar component with turn status and navigation
+import type { GameState } from '../types.js'
 import { createElement } from '../util.js'
 
+// @STATUS: Game status helpers
 export const getActionStatusText = (state: GameState): string => {
     if (state.selectedProperty) {
         return `Property selected: ${state.selectedProperty.name}`
@@ -11,10 +13,10 @@ export const getActionStatusText = (state: GameState): string => {
 const createTurnStatus = (state: GameState): HTMLElement => {
     const turnStatus = createElement("div", "turn-status")
     
-    const phaseIndicator = createElement("div", "phase-indicator", state.currentPhase)
+    const phaseIndicator = createElement("div", "phase-indicator", state.phase.replace(/_/g, ' '))
     phaseIndicator.id = "phase-indicator"
     
-    const actionStatus = createElement("span", undefined, getActionStatusText(state))
+    const actionStatus = createElement("span", null, getActionStatusText(state))
     actionStatus.id = "action-status"
     
     turnStatus.appendChild(phaseIndicator)
@@ -23,6 +25,7 @@ const createTurnStatus = (state: GameState): HTMLElement => {
     return turnStatus
 }
 
+// @EXPORT: Main footer bar creation function
 export const createFooterBar = (state: GameState): HTMLElement => {
     const footer = createElement("footer", "footer-bar")
     

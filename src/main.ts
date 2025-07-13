@@ -1,3 +1,4 @@
+// @MAIN: Main game initialization and UI orchestration
 import { createHeaderBar } from './component/headerBar.js'
 import { createCentralArea } from './component/centralArea.js'
 import { createActionPanel } from './component/actionPanel.js'
@@ -16,40 +17,30 @@ import {
     handleCenterViewClick,
     handleWindowResize
 } from './eventHandlers.js'
+import type { GameState } from './types.js'
+import { 
+    createInitialGameState, 
+    validateGameState, 
+    saveGameState, 
+    loadGameState,
+    addToActivityLog
+} from './gameState.js'
 
-export type Property = {
-    id: string
-    name: string
-    price: number
-    owner: string | null
-    developmentLevel: number
+// @INIT: Game initialization helpers
+const createInitialState = (): GameState => {
+    const savedState = loadGameState()
+    if (!(savedState instanceof Error)) {
+        const validation = validateGameState(savedState)
+        if (!(validation instanceof Error)) {
+            return savedState
+        }
+    }
+    
+    return createInitialGameState()
 }
 
-export type GameState = {
-    playerName: string
-    cash: number
-    turnNumber: number
-    currentPhase: string
-    selectedProperty: Property | null
-    marketStatus: string
-    activityLog: string[]
-}
 
-const createInitialState = (): GameState => ({
-    playerName: "Property Mogul",
-    cash: 100000,
-    turnNumber: 1,
-    currentPhase: "Planning Phase",
-    selectedProperty: null,
-    marketStatus: "Stable",
-    activityLog: [
-        "Game started - Welcome to Real Estate Empire!",
-        "Turn 1 - Your turn to make a move",
-        "Select a property to begin building your empire"
-    ]
-})
-
-
+// @UI: UI creation and management
 const createGameUI = (state: GameState): DocumentFragment => {
     const fragment = document.createDocumentFragment()
     
@@ -84,11 +75,17 @@ const updateActivityLog = (state: GameState): void => {
 }
 
 const updateDisplay = (state: GameState): void => {
-    updateElement("player-name", state.playerName)
-    updateElement("cash-amount", formatCurrency(state.cash))
-    updateElement("turn-number", state.turnNumber.toString())
-    updateElement("phase-indicator", state.currentPhase)
-    updateElement("market-status", state.marketStatus)
+    const currentPlayer = state.players[0]
+    if (!currentPlayer) {
+        console.error('No players found in game state')
+        return
+    }
+    
+    updateElement("player-name", currentPlayer.name)
+    updateElement("cash-amount", formatCurrency(currentPlayer.cash))
+    updateElement("turn-number", state.currentTurn.toString())
+    updateElement("phase-indicator", state.phase.replace(/_/g, ' '))
+    updateElement("market-status", state.market.trend)
     updateElement("action-status", getActionStatusText(state))
     updateActivityLog(state)
 }
@@ -100,6 +97,7 @@ const addClickListener = (id: string, handler: () => void): void => {
     }
 }
 
+// @EVENTS: Event listener setup
 const setupHeaderListeners = (state: GameState, updateState: (newState: GameState) => void): void => {
     addClickListener("settings-btn", () => { updateState(handleSettingsClick(state)) })
     addClickListener("help-btn", () => { updateState(handleHelpClick(state)) })
@@ -131,6 +129,7 @@ const setupEventListeners = (state: GameState, updateState: (newState: GameState
     })
 }
 
+// @BOOTSTRAP: Main game initialization
 const initializeGame = (): void => {
     const app = document.getElementById("app")
     if (app === null) {
@@ -141,6 +140,13 @@ const initializeGame = (): void => {
     
     const updateState = (newState: GameState): void => {
         gameState = newState
+        
+        // Auto-save game state
+        const saveResult = saveGameState(gameState)
+        if (saveResult instanceof Error) {
+            console.warn('Failed to save game state:', saveResult.message)
+        }
+        
         updateDisplay(gameState)
     }
     
@@ -148,6 +154,15 @@ const initializeGame = (): void => {
     app.appendChild(ui)
     
     setupEventListeners(gameState, updateState)
+    
+    // Validate initial game state
+    const validation = validateGameState(gameState)
+    if (validation instanceof Error) {
+        console.error('Invalid initial game state:', validation.message)
+        const errorMessage = `Game state error: ${validation.message}`
+        gameState = addToActivityLog(gameState, errorMessage)
+        updateDisplay(gameState)
+    }
 }
 
 initializeGame()

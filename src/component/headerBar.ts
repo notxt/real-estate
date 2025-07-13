@@ -1,21 +1,37 @@
-import type { GameState } from '../main.js'
+// @HEADER: Header bar component with player info and controls
+import type { GameState } from '../types.js'
 import { createElement, formatCurrency } from '../util.js'
 
+// @PLAYER: Player information display helpers
 const createPlayerDisplay = (state: GameState): HTMLElement => {
+    const currentPlayer = state.players[0]
+    if (!currentPlayer) {
+        const errorSpan = createElement("span")
+        errorSpan.innerHTML = `Player: <strong id="player-name">Unknown</strong>`
+        return errorSpan
+    }
+    
     const playerSpan = createElement("span")
-    playerSpan.innerHTML = `Player: <strong id="player-name">${state.playerName}</strong>`
+    playerSpan.innerHTML = `Player: <strong id="player-name">${currentPlayer.name}</strong>`
     return playerSpan
 }
 
 const createCashDisplay = (state: GameState): HTMLElement => {
+    const currentPlayer = state.players[0]
+    if (!currentPlayer) {
+        const errorDisplay = createElement("div", "cash-display")
+        errorDisplay.innerHTML = `Cash: $<span id="cash-amount">${formatCurrency(0)}</span>`
+        return errorDisplay
+    }
+    
     const cashDisplay = createElement("div", "cash-display")
-    cashDisplay.innerHTML = `Cash: $<span id="cash-amount">${formatCurrency(state.cash)}</span>`
+    cashDisplay.innerHTML = `Cash: $<span id="cash-amount">${formatCurrency(currentPlayer.cash)}</span>`
     return cashDisplay
 }
 
 const createTurnCounter = (state: GameState): HTMLElement => {
     const turnCounter = createElement("div", "turn-counter")
-    turnCounter.innerHTML = `Turn: <span id="turn-number">${state.turnNumber.toString()}</span>`
+    turnCounter.innerHTML = `Turn: <span id="turn-number">${state.currentTurn.toString()}</span>`
     return turnCounter
 }
 
@@ -29,6 +45,7 @@ const createPlayerInfo = (state: GameState): HTMLElement => {
     return playerInfo
 }
 
+// @BUTTONS: Header button controls
 const createHeaderButtons = (): HTMLElement => {
     const headerRight = createElement("div", "header-right")
     
@@ -44,6 +61,7 @@ const createHeaderButtons = (): HTMLElement => {
     return headerRight
 }
 
+// @EXPORT: Main header bar creation function
 export const createHeaderBar = (state: GameState): HTMLElement => {
     const header = createElement("header", "header-bar")
     
