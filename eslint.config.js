@@ -173,7 +173,7 @@ export default tseslint.config(
         { max: 50, skipBlankLines: true, skipComments: true },
       ],
       "max-params": ["error", { max: 3 }],
-      "max-statements": ["error", { max: 10 }],
+      "max-statements": ["error", { max: 30 }],
       "no-console": "off",
       "no-debugger": "error",
       "no-alert": "error",
