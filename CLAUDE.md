@@ -42,6 +42,7 @@ tail -f log/dev.log     # Server logs
 - Functional programming only - use functions, not classes
 - Return errors (don't throw)
 - Singular directory names (`test/` not `tests/`)
+- ES module imports must include `.js` extensions
 
 ## Must Know
 
@@ -65,7 +66,10 @@ tail -f log/dev.log     # Server logs
 **After each task:** Commit and push changes
 **PR size:** Keep under 20 files, single purpose
 
-## Project Organization
+## Code Design Principles
 
-**File Management:**
-- Put all debug scripts and screenshots in a debug folder
+- Avoid generics if possible
+- Always show errors in the UI
+- Favor TypeScript types over interfaces
+- Use `const fn = () => {...}` rather than `function`
+- ES modules: import paths must include `.js` extensions
