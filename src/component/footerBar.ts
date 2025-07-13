@@ -16,7 +16,7 @@ const createTurnStatus = (state: GameState): HTMLElement => {
     const phaseIndicator = createElement("div", "phase-indicator", state.phase.replace(/_/g, ' '))
     phaseIndicator.id = "phase-indicator"
     
-    const actionStatus = createElement("span", undefined, getActionStatusText(state))
+    const actionStatus = createElement("span", null, getActionStatusText(state))
     actionStatus.id = "action-status"
     
     turnStatus.appendChild(phaseIndicator)

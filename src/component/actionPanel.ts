@@ -18,7 +18,7 @@ const createPropertyDetailsSection = (): HTMLElement => {
 // @BUTTONS: Action button controls
 const createActionsSection = (): HTMLElement => {
     const actionsSection = createElement("div", "panel-section")
-    const actionsTitle = createElement("h3", undefined, "Available Actions")
+    const actionsTitle = createElement("h3", null, "Available Actions")
     const actionsList = createElement("ul", "actions-list")
     
     actionButtonConfigs.forEach(action => {
@@ -46,7 +46,7 @@ const createMarketSection = (state: GameState): HTMLElement => {
 // @ACTIVITY: Recent activity log
 const createActivitySection = (state: GameState): HTMLElement => {
     const activitySection = createElement("div", "panel-section")
-    const activityTitle = createElement("h3", undefined, "Recent Activity")
+    const activityTitle = createElement("h3", null, "Recent Activity")
     const activityLog = createElement("div", "activity-log")
     activityLog.id = "activity-log"
     

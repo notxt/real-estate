@@ -74,6 +74,7 @@ tail -f log/dev.log     # Server logs
 - Use `const fn = () => {...}` rather than `function`
 - ES modules: import paths must include `.js` extensions
 - Don't use optional properties in TypeScript
+- Prefer null over undefined
 
 ## Development Philosophy
 

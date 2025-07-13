@@ -36,7 +36,7 @@ const createGridControls = (): HTMLElement => {
 
 export const createCentralArea = (): HTMLElement => {
     const central = createElement("div", "central-area")
-    const title = createElement("h2", undefined, "Property Grid")
+    const title = createElement("h2", null, "Property Grid")
     
     central.appendChild(title)
     central.appendChild(createGridPlaceholder())
