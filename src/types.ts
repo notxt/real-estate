@@ -68,16 +68,42 @@ export type Player = {
   netWorth: number
   properties: PropertyId[]
   isAI: boolean
-  strategy?: AIStrategy
+  strategy: AIStrategy
 }
 
 // @ACTIONS: Player action types
-export type GameAction = {
-  type: 'buy' | 'sell' | 'develop' | 'pass' | 'next_turn'
+export type BuyAction = {
+  type: 'buy'
   playerId: PlayerId
-  propertyId?: PropertyId
-  amount?: number
+  propertyId: PropertyId
+  amount: number
 }
+
+export type SellAction = {
+  type: 'sell'
+  playerId: PlayerId
+  propertyId: PropertyId
+  amount: number
+}
+
+export type DevelopAction = {
+  type: 'develop'
+  playerId: PlayerId
+  propertyId: PropertyId
+  amount: number
+}
+
+export type PassAction = {
+  type: 'pass'
+  playerId: PlayerId
+}
+
+export type NextTurnAction = {
+  type: 'next_turn'
+  playerId: PlayerId
+}
+
+export type GameAction = BuyAction | SellAction | DevelopAction | PassAction | NextTurnAction
 
 // @STATE: Main game state type
 export type GameState = {

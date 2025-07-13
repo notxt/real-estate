@@ -1,6 +1,6 @@
 // @GAMESTATE: Core game state management and business logic
 import type { GameState, Player, Property, PlayerId, PropertyId, MarketConditions } from './types.js'
-import { GamePhase, PropertyType, DevelopmentLevel } from './types.js'
+import { GamePhase, PropertyType, DevelopmentLevel, AIStrategy } from './types.js'
 
 // @FACTORY: Game entity creation functions
 export const createInitialPlayer = (): Player => ({
@@ -9,7 +9,8 @@ export const createInitialPlayer = (): Player => ({
   cash: 100000,
   netWorth: 100000,
   properties: [],
-  isAI: false
+  isAI: false,
+  strategy: AIStrategy.Balanced
 })
 
 export const createInitialProperties = (): Property[] => [
@@ -112,7 +113,7 @@ export const updatePlayerCash = (gameState: GameState, playerId: PlayerId, amoun
     netWorth: calculateNetWorth({ ...player, cash: newCash }, gameState.properties),
     properties: player.properties,
     isAI: player.isAI,
-    ...(player.strategy !== undefined ? { strategy: player.strategy } : {})
+    strategy: player.strategy
   }
   
   const updatedPlayers = [...gameState.players]
@@ -140,7 +141,7 @@ const removePropertyFromPlayer = (players: Player[], playerId: PlayerId, propert
         properties: filteredProperties,
         netWorth: player.netWorth,
         isAI: player.isAI,
-        ...(player.strategy !== undefined ? { strategy: player.strategy } : {})
+        strategy: player.strategy
       }
     }
   }
@@ -166,7 +167,7 @@ const addPropertyToPlayer = (players: Player[], playerId: PlayerId, propertyId: 
       properties: newProperties,
       netWorth: player.netWorth,
       isAI: player.isAI,
-      ...(player.strategy !== undefined ? { strategy: player.strategy } : {})
+      strategy: player.strategy
     }
   }
   

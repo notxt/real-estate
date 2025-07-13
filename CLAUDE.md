@@ -73,6 +73,7 @@ tail -f log/dev.log     # Server logs
 - Favor TypeScript types over interfaces
 - Use `const fn = () => {...}` rather than `function`
 - ES modules: import paths must include `.js` extensions
+- Don't use optional properties in TypeScript
 
 ## Development Philosophy
 
