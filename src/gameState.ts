@@ -13,41 +13,60 @@ export const createInitialPlayer = (): Player => ({
   strategy: AIStrategy.Balanced
 })
 
-export const createInitialProperties = (): Property[] => [
-  {
-    id: 'prop1',
-    position: { x: 0, y: 0 },
-    type: PropertyType.VacantLot,
-    value: 25000,
-    owner: null,
-    developmentLevel: DevelopmentLevel.Vacant,
-    monthlyIncome: 0,
-    developmentCost: 15000,
-    name: 'Downtown Lot A'
-  },
-  {
-    id: 'prop2',
-    position: { x: 1, y: 0 },
-    type: PropertyType.VacantLot,
-    value: 30000,
-    owner: null,
-    developmentLevel: DevelopmentLevel.Vacant,
-    monthlyIncome: 0,
-    developmentCost: 18000,
-    name: 'Downtown Lot B'
-  },
-  {
-    id: 'prop3',
-    position: { x: 0, y: 1 },
-    type: PropertyType.Residential,
-    value: 45000,
-    owner: null,
-    developmentLevel: DevelopmentLevel.Level1,
-    monthlyIncome: 1200,
-    developmentCost: 20000,
-    name: 'Suburban House'
+const createPropertyForPosition = (x: number, y: number): Property => {
+  const propertyId = `prop_${x.toString()}_${y.toString()}`
+  
+  let type = PropertyType.VacantLot
+  let developmentLevel = DevelopmentLevel.Vacant
+  let monthlyIncome = 0
+  let value = 20000 + Math.floor(Math.random() * 15000)
+  
+  if (Math.random() < 0.2) {
+    const rand = Math.random()
+    if (rand < 0.4) {
+      type = PropertyType.Residential
+      developmentLevel = DevelopmentLevel.Level1
+      monthlyIncome = 800 + Math.floor(Math.random() * 600)
+      value = 35000 + Math.floor(Math.random() * 20000)
+    } else if (rand < 0.7) {
+      type = PropertyType.Commercial
+      developmentLevel = DevelopmentLevel.Level1
+      monthlyIncome = 1200 + Math.floor(Math.random() * 800)
+      value = 45000 + Math.floor(Math.random() * 25000)
+    } else {
+      type = PropertyType.Industrial
+      developmentLevel = DevelopmentLevel.Level1
+      monthlyIncome = 1500 + Math.floor(Math.random() * 1000)
+      value = 55000 + Math.floor(Math.random() * 30000)
+    }
   }
-]
+  
+  return {
+    id: propertyId,
+    position: { x, y },
+    type,
+    value,
+    owner: null,
+    developmentLevel,
+    monthlyIncome,
+    developmentCost: 15000 + Math.floor(Math.random() * 10000),
+    name: `Property ${x.toString()},${y.toString()}`
+  }
+}
+
+export const createInitialProperties = (): Property[] => {
+  const properties: Property[] = []
+  const GRID_WIDTH = 20
+  const GRID_HEIGHT = 15
+  
+  for (let y = 0; y < GRID_HEIGHT; y++) {
+    for (let x = 0; x < GRID_WIDTH; x++) {
+      properties.push(createPropertyForPosition(x, y))
+    }
+  }
+  
+  return properties
+}
 
 export const createInitialMarketConditions = (): MarketConditions => ({
   trend: 'stable',

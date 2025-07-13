@@ -33,13 +33,12 @@ test.describe('Real Estate Empire Homepage', () => {
     const main = page.locator('main');
     await expect(main).toBeVisible();
     
-    // Check central area with property grid placeholder
+    // Check central area with property grid
     const centralArea = page.locator('.central-area');
     await expect(centralArea).toBeVisible();
     
-    const gridPlaceholder = page.locator('.grid-placeholder');
-    await expect(gridPlaceholder).toBeVisible();
-    await expect(gridPlaceholder).toContainText('Property Grid Coming Soon');
+    const propertyGrid = page.locator('.property-grid');
+    await expect(propertyGrid).toBeVisible();
     
     // Check action panel
     const actionPanel = page.locator('.action-panel');

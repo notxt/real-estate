@@ -1,6 +1,9 @@
 import { createElement } from '../util.js'
+import { createPropertyGrid } from './propertyGrid.js'
+import type { GameState, PropertyId } from '../types.js'
 
-const createGridPlaceholder = (): HTMLElement => {
+// @ts-expect-error - keeping for future use
+const _createGridPlaceholder = (): HTMLElement => {
     const gridPlaceholder = createElement("div", "grid-placeholder")
     gridPlaceholder.innerHTML = `
         <h3>Property Grid Coming Soon</h3>
@@ -34,12 +37,12 @@ const createGridControls = (): HTMLElement => {
     return gridControls
 }
 
-export const createCentralArea = (): HTMLElement => {
+export const createCentralArea = (gameState: GameState, onPropertySelect: (propertyId: PropertyId) => void): HTMLElement => {
     const central = createElement("div", "central-area")
     const title = createElement("h2", null, "Property Grid")
     
     central.appendChild(title)
-    central.appendChild(createGridPlaceholder())
+    central.appendChild(createPropertyGrid(gameState, onPropertySelect))
     central.appendChild(createGridControls())
     
     return central
