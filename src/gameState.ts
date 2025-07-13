@@ -1,6 +1,8 @@
+// @GAMESTATE: Core game state management and business logic
 import type { GameState, Player, Property, PlayerId, PropertyId, MarketConditions } from './types.js'
 import { GamePhase, PropertyType, DevelopmentLevel } from './types.js'
 
+// @FACTORY: Game entity creation functions
 export const createInitialPlayer = (): Player => ({
   id: 'player1',
   name: 'Property Mogul',
@@ -53,6 +55,7 @@ export const createInitialMarketConditions = (): MarketConditions => ({
   interestRate: 3.5
 })
 
+// @INIT: Game initialization functions
 export const createInitialGameState = (): GameState => {
   const player = createInitialPlayer()
   const properties = createInitialProperties()
@@ -74,6 +77,7 @@ export const createInitialGameState = (): GameState => {
   }
 }
 
+// @CALCULATIONS: Game math and derived values
 export const calculateNetWorth = (player: Player, properties: Property[]): number => {
   const propertyValue = player.properties.reduce((total, propertyId) => {
     const property = properties.find(p => p.id === propertyId)
@@ -83,6 +87,7 @@ export const calculateNetWorth = (player: Player, properties: Property[]): numbe
   return player.cash + propertyValue
 }
 
+// @MUTATIONS: State update functions
 export const updatePlayerCash = (gameState: GameState, playerId: PlayerId, amount: number): Error | GameState => {
   const playerIndex = gameState.players.findIndex(p => p.id === playerId)
   if (playerIndex === -1) {
@@ -119,6 +124,7 @@ export const updatePlayerCash = (gameState: GameState, playerId: PlayerId, amoun
   }
 }
 
+// @HELPERS: Internal helper functions
 const removePropertyFromPlayer = (players: Player[], playerId: PlayerId, propertyId: PropertyId): Player[] => {
   const updatedPlayers = [...players]
   const playerIndex = updatedPlayers.findIndex(p => p.id === playerId)
@@ -215,6 +221,7 @@ export const transferPropertyOwnership = (gameState: GameState, propertyId: Prop
   }
 }
 
+// @TURNS: Turn management functions
 export const advanceTurn = (gameState: GameState): GameState => {
   const nextTurn = gameState.currentTurn + 1
   const logEntry = `Turn ${nextTurn.toString()} - Your turn to make a move`
@@ -231,6 +238,7 @@ export const addToActivityLog = (gameState: GameState, message: string): GameSta
   activityLog: [...gameState.activityLog, message]
 })
 
+// @SELECTION: Property selection management
 export const selectProperty = (gameState: GameState, propertyId: PropertyId | null): Error | GameState => {
   if (propertyId === null) {
     return {
@@ -250,6 +258,7 @@ export const selectProperty = (gameState: GameState, propertyId: PropertyId | nu
   }
 }
 
+// @VALIDATION: Game state validation functions
 export const validateGameState = (gameState: GameState): Error | true => {
   if (gameState.players.length === 0) {
     return new Error('Game must have at least one player')
@@ -280,6 +289,7 @@ export const validateGameState = (gameState: GameState): Error | true => {
   return true
 }
 
+// @PERSISTENCE: Save/load functionality
 export const saveGameState = (gameState: GameState): Error | true => {
   try {
     const serialized = JSON.stringify(gameState)

@@ -1,3 +1,4 @@
+// @MAIN: Main game initialization and UI orchestration
 import { createHeaderBar } from './component/headerBar.js'
 import { createCentralArea } from './component/centralArea.js'
 import { createActionPanel } from './component/actionPanel.js'
@@ -17,7 +18,6 @@ import {
     handleWindowResize
 } from './eventHandlers.js'
 import type { GameState } from './types.js'
-import { GamePhase } from './types.js'
 import { 
     createInitialGameState, 
     validateGameState, 
@@ -26,52 +26,7 @@ import {
     addToActivityLog
 } from './gameState.js'
 
-// Legacy types for backward compatibility
-export type LegacyProperty = {
-    id: string
-    name: string
-    price: number
-    owner: string | null
-    developmentLevel: number
-}
-
-export type LegacyGameState = {
-    playerName: string
-    cash: number
-    turnNumber: number
-    currentPhase: string
-    selectedProperty: LegacyProperty | null
-    marketStatus: string
-    activityLog: string[]
-}
-
-const convertToLegacyState = (gameState: GameState): LegacyGameState => {
-    const currentPlayer = gameState.players[0]
-    const selectedProperty = gameState.selectedProperty
-    
-    let legacySelectedProperty: LegacyProperty | null = null
-    if (selectedProperty) {
-        legacySelectedProperty = {
-            id: selectedProperty.id,
-            name: selectedProperty.name,
-            price: selectedProperty.value,
-            owner: selectedProperty.owner,
-            developmentLevel: selectedProperty.developmentLevel
-        }
-    }
-    
-    return {
-        playerName: currentPlayer?.name ?? 'Property Mogul',
-        cash: currentPlayer?.cash ?? 0,
-        turnNumber: gameState.currentTurn,
-        currentPhase: gameState.phase === GamePhase.PropertyAcquisition ? 'Planning Phase' : gameState.phase.replace(/_/g, ' '),
-        selectedProperty: legacySelectedProperty,
-        marketStatus: gameState.market.trend === 'stable' ? 'Stable' : 
-                     gameState.market.trend === 'rising' ? 'Rising' : 'Falling',
-        activityLog: gameState.activityLog
-    }
-}
-
+// @INIT: Game initialization helpers
 const createInitialState = (): GameState => {
     const savedState = loadGameState()
     if (!(savedState instanceof Error)) {
@@ -85,7 +40,8 @@ const createInitialState = (): GameState => {
 }
 
 
-const createGameUI = (state: LegacyGameState): DocumentFragment => {
+// @UI: UI creation and management
+const createGameUI = (state: GameState): DocumentFragment => {
     const fragment = document.createDocumentFragment()
     
     fragment.appendChild(createHeaderBar(state))
@@ -107,7 +63,7 @@ const updateElement = (id: string, content: string): void => {
     }
 }
 
-const updateActivityLog = (state: LegacyGameState): void => {
+const updateActivityLog = (state: GameState): void => {
     const activityLogEl = document.getElementById("activity-log")
     if (activityLogEl !== null) {
         activityLogEl.innerHTML = ""
@@ -118,12 +74,18 @@ const updateActivityLog = (state: LegacyGameState): void => {
     }
 }
 
-const updateDisplay = (state: LegacyGameState): void => {
-    updateElement("player-name", state.playerName)
-    updateElement("cash-amount", formatCurrency(state.cash))
-    updateElement("turn-number", state.turnNumber.toString())
-    updateElement("phase-indicator", state.currentPhase)
-    updateElement("market-status", state.marketStatus)
+const updateDisplay = (state: GameState): void => {
+    const currentPlayer = state.players[0]
+    if (!currentPlayer) {
+        console.error('No players found in game state')
+        return
+    }
+    
+    updateElement("player-name", currentPlayer.name)
+    updateElement("cash-amount", formatCurrency(currentPlayer.cash))
+    updateElement("turn-number", state.currentTurn.toString())
+    updateElement("phase-indicator", state.phase.replace(/_/g, ' '))
+    updateElement("market-status", state.market.trend)
     updateElement("action-status", getActionStatusText(state))
     updateActivityLog(state)
 }
@@ -135,12 +97,13 @@ const addClickListener = (id: string, handler: () => void): void => {
     }
 }
 
-const setupHeaderListeners = (state: LegacyGameState, updateState: (newState: LegacyGameState) => void): void => {
+// @EVENTS: Event listener setup
+const setupHeaderListeners = (state: GameState, updateState: (newState: GameState) => void): void => {
     addClickListener("settings-btn", () => { updateState(handleSettingsClick(state)) })
     addClickListener("help-btn", () => { updateState(handleHelpClick(state)) })
 }
 
-const setupActionListeners = (state: LegacyGameState, updateState: (newState: LegacyGameState) => void): void => {
+const setupActionListeners = (state: GameState, updateState: (newState: GameState) => void): void => {
     addClickListener("buy-btn", () => { updateState(handleBuyClick(state)) })
     addClickListener("develop-btn", () => { updateState(handleDevelopClick(state)) })
     addClickListener("sell-btn", () => { updateState(handleSellClick(state)) })
@@ -148,13 +111,13 @@ const setupActionListeners = (state: LegacyGameState, updateState: (newState: Le
     addClickListener("next-turn-btn", () => { updateState(handleNextTurnClick(state)) })
 }
 
-const setupGridListeners = (state: LegacyGameState, updateState: (newState: LegacyGameState) => void): void => {
+const setupGridListeners = (state: GameState, updateState: (newState: GameState) => void): void => {
     addClickListener("zoom-in", () => { updateState(handleZoomInClick(state)) })
     addClickListener("zoom-out", () => { updateState(handleZoomOutClick(state)) })
     addClickListener("center-view", () => { updateState(handleCenterViewClick(state)) })
 }
 
-const setupEventListeners = (state: LegacyGameState, updateState: (newState: LegacyGameState) => void): void => {
+const setupEventListeners = (state: GameState, updateState: (newState: GameState) => void): void => {
     setupHeaderListeners(state, updateState)
     setupActionListeners(state, updateState)
     setupGridListeners(state, updateState)
@@ -166,40 +129,39 @@ const setupEventListeners = (state: LegacyGameState, updateState: (newState: Leg
     })
 }
 
+// @BOOTSTRAP: Main game initialization
 const initializeGame = (): void => {
     const app = document.getElementById("app")
     if (app === null) {
         throw new Error("app element not found")
     }
     
-    let coreGameState = createInitialState()
-    let legacyState = convertToLegacyState(coreGameState)
+    let gameState = createInitialState()
     
-    const updateState = (newLegacyState: LegacyGameState): void => {
-        legacyState = newLegacyState
+    const updateState = (newState: GameState): void => {
+        gameState = newState
         
-        // Auto-save the core game state periodically
-        const saveResult = saveGameState(coreGameState)
+        // Auto-save game state
+        const saveResult = saveGameState(gameState)
         if (saveResult instanceof Error) {
             console.warn('Failed to save game state:', saveResult.message)
         }
         
-        updateDisplay(legacyState)
+        updateDisplay(gameState)
     }
     
-    const ui = createGameUI(legacyState)
+    const ui = createGameUI(gameState)
     app.appendChild(ui)
     
-    setupEventListeners(legacyState, updateState)
+    setupEventListeners(gameState, updateState)
     
     // Validate initial game state
-    const validation = validateGameState(coreGameState)
+    const validation = validateGameState(gameState)
     if (validation instanceof Error) {
         console.error('Invalid initial game state:', validation.message)
         const errorMessage = `Game state error: ${validation.message}`
-        coreGameState = addToActivityLog(coreGameState, errorMessage)
-        legacyState = convertToLegacyState(coreGameState)
-        updateDisplay(legacyState)
+        gameState = addToActivityLog(gameState, errorMessage)
+        updateDisplay(gameState)
     }
 }
 

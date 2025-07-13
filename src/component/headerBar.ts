@@ -1,25 +1,29 @@
-import type { LegacyGameState } from '../main.js'
+// @HEADER: Header bar component with player info and controls
+import type { GameState } from '../types.js'
 import { createElement, formatCurrency } from '../util.js'
 
-const createPlayerDisplay = (state: LegacyGameState): HTMLElement => {
+// @PLAYER: Player information display helpers
+const createPlayerDisplay = (state: GameState): HTMLElement => {
+    const currentPlayer = state.players[0]
     const playerSpan = createElement("span")
-    playerSpan.innerHTML = `Player: <strong id="player-name">${state.playerName}</strong>`
+    playerSpan.innerHTML = `Player: <strong id="player-name">${currentPlayer?.name ?? 'Unknown'}</strong>`
     return playerSpan
 }
 
-const createCashDisplay = (state: LegacyGameState): HTMLElement => {
+const createCashDisplay = (state: GameState): HTMLElement => {
+    const currentPlayer = state.players[0]
     const cashDisplay = createElement("div", "cash-display")
-    cashDisplay.innerHTML = `Cash: $<span id="cash-amount">${formatCurrency(state.cash)}</span>`
+    cashDisplay.innerHTML = `Cash: $<span id="cash-amount">${formatCurrency(currentPlayer?.cash ?? 0)}</span>`
     return cashDisplay
 }
 
-const createTurnCounter = (state: LegacyGameState): HTMLElement => {
+const createTurnCounter = (state: GameState): HTMLElement => {
     const turnCounter = createElement("div", "turn-counter")
-    turnCounter.innerHTML = `Turn: <span id="turn-number">${state.turnNumber.toString()}</span>`
+    turnCounter.innerHTML = `Turn: <span id="turn-number">${state.currentTurn.toString()}</span>`
     return turnCounter
 }
 
-const createPlayerInfo = (state: LegacyGameState): HTMLElement => {
+const createPlayerInfo = (state: GameState): HTMLElement => {
     const playerInfo = createElement("div", "player-info")
     
     playerInfo.appendChild(createPlayerDisplay(state))
@@ -29,6 +33,7 @@ const createPlayerInfo = (state: LegacyGameState): HTMLElement => {
     return playerInfo
 }
 
+// @BUTTONS: Header button controls
 const createHeaderButtons = (): HTMLElement => {
     const headerRight = createElement("div", "header-right")
     
@@ -44,7 +49,8 @@ const createHeaderButtons = (): HTMLElement => {
     return headerRight
 }
 
-export const createHeaderBar = (state: LegacyGameState): HTMLElement => {
+// @EXPORT: Main header bar creation function
+export const createHeaderBar = (state: GameState): HTMLElement => {
     const header = createElement("header", "header-bar")
     
     const headerLeft = createElement("div", "header-left")

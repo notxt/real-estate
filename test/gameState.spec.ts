@@ -15,11 +15,11 @@ test.describe('Game State Management', () => {
     await expect(turnNumber).toHaveText('1');
     
     const phaseIndicator = page.locator('#phase-indicator');
-    await expect(phaseIndicator).toHaveText('Planning Phase');
+    await expect(phaseIndicator).toHaveText('property acquisition');
     
     // Check market status
     const marketStatus = page.locator('#market-status');
-    await expect(marketStatus).toHaveText('Stable');
+    await expect(marketStatus).toHaveText('stable');
   });
 
   test('should handle turn progression correctly', async ({ page }) => {
@@ -92,14 +92,14 @@ test.describe('Game State Management', () => {
     await page.goto('/');
     
     const phaseIndicator = page.locator('#phase-indicator');
-    await expect(phaseIndicator).toHaveText('Planning Phase');
+    await expect(phaseIndicator).toHaveText('property acquisition');
     
     // Phase should remain consistent during interactions
     const passBtn = page.locator('#pass-btn');
     await passBtn.click();
     
-    // Phase might change based on game logic
-    await expect(phaseIndicator).toBeVisible();
+    // Phase should show current game phase
+    await expect(phaseIndicator).toContainText('property');
   });
 
   test('should handle window resize events and update state', async ({ page }) => {
@@ -124,7 +124,7 @@ test.describe('Game State Management', () => {
     
     const marketStatus = page.locator('#market-status');
     await expect(marketStatus).toBeVisible();
-    await expect(marketStatus).toHaveText('Stable');
+    await expect(marketStatus).toHaveText('stable');
   });
 
   test('should show action status based on current state', async ({ page }) => {

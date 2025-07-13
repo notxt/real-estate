@@ -73,3 +73,12 @@ tail -f log/dev.log     # Server logs
 - Favor TypeScript types over interfaces
 - Use `const fn = () => {...}` rather than `function`
 - ES modules: import paths must include `.js` extensions
+
+## Development Philosophy
+
+- Refactor aggressively. Make sure the code is always clean and human readable
+
+## Code Navigation Tips
+
+- Leave comments for yourself using easily searchable tags so you can quickly navigate files
+- Use unique, descriptive tags like `// @NAVIGATION:` or `// @TODO:` to mark important sections or notes for later reference

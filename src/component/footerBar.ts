@@ -1,17 +1,19 @@
-import type { LegacyGameState } from '../main.js'
+// @FOOTER: Footer bar component with turn status and navigation
+import type { GameState } from '../types.js'
 import { createElement } from '../util.js'
 
-export const getActionStatusText = (state: LegacyGameState): string => {
+// @STATUS: Game status helpers
+export const getActionStatusText = (state: GameState): string => {
     if (state.selectedProperty) {
         return `Property selected: ${state.selectedProperty.name}`
     }
     return "Choose your next action"
 }
 
-const createTurnStatus = (state: LegacyGameState): HTMLElement => {
+const createTurnStatus = (state: GameState): HTMLElement => {
     const turnStatus = createElement("div", "turn-status")
     
-    const phaseIndicator = createElement("div", "phase-indicator", state.currentPhase)
+    const phaseIndicator = createElement("div", "phase-indicator", state.phase.replace(/_/g, ' '))
     phaseIndicator.id = "phase-indicator"
     
     const actionStatus = createElement("span", undefined, getActionStatusText(state))
@@ -23,7 +25,8 @@ const createTurnStatus = (state: LegacyGameState): HTMLElement => {
     return turnStatus
 }
 
-export const createFooterBar = (state: LegacyGameState): HTMLElement => {
+// @EXPORT: Main footer bar creation function
+export const createFooterBar = (state: GameState): HTMLElement => {
     const footer = createElement("footer", "footer-bar")
     
     const nextTurnBtn = createElement("button", "next-turn-button", "Next Turn")

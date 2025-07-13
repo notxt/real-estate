@@ -1,6 +1,10 @@
+// @TYPES: Core TypeScript type definitions for Real Estate Empire game
+
+// @IDS: Unique identifier types
 export type PropertyId = string
 export type PlayerId = string
 
+// @ENUMS: Game enumeration types
 export enum PropertyType {
   Residential = 'residential',
   Commercial = 'commercial',
@@ -30,11 +34,13 @@ export enum AIStrategy {
   Balanced = 'balanced'
 }
 
+// @GEOMETRY: Spatial positioning types
 export type GridPosition = {
   x: number
   y: number
 }
 
+// @MARKET: Market and economic types
 export type MarketConditions = {
   trend: 'rising' | 'falling' | 'stable'
   volatility: 'low' | 'medium' | 'high'
@@ -42,6 +48,7 @@ export type MarketConditions = {
   interestRate: number
 }
 
+// @ENTITIES: Core game entity types
 export type Property = {
   id: PropertyId
   position: GridPosition
@@ -64,6 +71,7 @@ export type Player = {
   strategy?: AIStrategy
 }
 
+// @ACTIONS: Player action types
 export type GameAction = {
   type: 'buy' | 'sell' | 'develop' | 'pass' | 'next_turn'
   playerId: PlayerId
@@ -71,6 +79,7 @@ export type GameAction = {
   amount?: number
 }
 
+// @STATE: Main game state type
 export type GameState = {
   currentTurn: number
   currentPlayer: PlayerId
