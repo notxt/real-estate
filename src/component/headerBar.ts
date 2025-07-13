@@ -5,15 +5,27 @@ import { createElement, formatCurrency } from '../util.js'
 // @PLAYER: Player information display helpers
 const createPlayerDisplay = (state: GameState): HTMLElement => {
     const currentPlayer = state.players[0]
+    if (!currentPlayer) {
+        const errorSpan = createElement("span")
+        errorSpan.innerHTML = `Player: <strong id="player-name">Unknown</strong>`
+        return errorSpan
+    }
+    
     const playerSpan = createElement("span")
-    playerSpan.innerHTML = `Player: <strong id="player-name">${currentPlayer?.name ?? 'Unknown'}</strong>`
+    playerSpan.innerHTML = `Player: <strong id="player-name">${currentPlayer.name}</strong>`
     return playerSpan
 }
 
 const createCashDisplay = (state: GameState): HTMLElement => {
     const currentPlayer = state.players[0]
+    if (!currentPlayer) {
+        const errorDisplay = createElement("div", "cash-display")
+        errorDisplay.innerHTML = `Cash: $<span id="cash-amount">${formatCurrency(0)}</span>`
+        return errorDisplay
+    }
+    
     const cashDisplay = createElement("div", "cash-display")
-    cashDisplay.innerHTML = `Cash: $<span id="cash-amount">${formatCurrency(currentPlayer?.cash ?? 0)}</span>`
+    cashDisplay.innerHTML = `Cash: $<span id="cash-amount">${formatCurrency(currentPlayer.cash)}</span>`
     return cashDisplay
 }
 

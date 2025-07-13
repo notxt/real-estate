@@ -75,6 +75,7 @@ tail -f log/dev.log     # Server logs
 - ES modules: import paths must include `.js` extensions
 - Don't use optional properties in TypeScript
 - Prefer null over undefined
+- Prefer early returns over optional chaining
 
 ## Development Philosophy
 

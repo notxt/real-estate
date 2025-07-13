@@ -82,7 +82,11 @@ export const createInitialGameState = (): GameState => {
 export const calculateNetWorth = (player: Player, properties: Property[]): number => {
   const propertyValue = player.properties.reduce((total, propertyId) => {
     const property = properties.find(p => p.id === propertyId)
-    return total + (property?.value ?? 0)
+    if (!property) {
+      console.warn(`Property ${propertyId} not found when calculating net worth`)
+      return total
+    }
+    return total + property.value
   }, 0)
   
   return player.cash + propertyValue
