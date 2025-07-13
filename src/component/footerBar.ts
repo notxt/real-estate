@@ -1,14 +1,14 @@
-import type { GameState } from '../main.js'
+import type { LegacyGameState } from '../main.js'
 import { createElement } from '../util.js'
 
-export const getActionStatusText = (state: GameState): string => {
+export const getActionStatusText = (state: LegacyGameState): string => {
     if (state.selectedProperty) {
         return `Property selected: ${state.selectedProperty.name}`
     }
     return "Choose your next action"
 }
 
-const createTurnStatus = (state: GameState): HTMLElement => {
+const createTurnStatus = (state: LegacyGameState): HTMLElement => {
     const turnStatus = createElement("div", "turn-status")
     
     const phaseIndicator = createElement("div", "phase-indicator", state.currentPhase)
@@ -23,7 +23,7 @@ const createTurnStatus = (state: GameState): HTMLElement => {
     return turnStatus
 }
 
-export const createFooterBar = (state: GameState): HTMLElement => {
+export const createFooterBar = (state: LegacyGameState): HTMLElement => {
     const footer = createElement("footer", "footer-bar")
     
     const nextTurnBtn = createElement("button", "next-turn-button", "Next Turn")

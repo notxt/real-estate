@@ -1,4 +1,4 @@
-import type { GameState } from '../main.js'
+import type { LegacyGameState } from '../main.js'
 import { createElement } from '../util.js'
 import { actionButtonConfigs, createActionButton } from './actionHelpers.js'
 
@@ -27,7 +27,7 @@ const createActionsSection = (): HTMLElement => {
     return actionsSection
 }
 
-const createMarketSection = (state: GameState): HTMLElement => {
+const createMarketSection = (state: LegacyGameState): HTMLElement => {
     const marketSection = createElement("div", "panel-section")
     marketSection.innerHTML = `
         <h3>Market Conditions</h3>
@@ -39,7 +39,7 @@ const createMarketSection = (state: GameState): HTMLElement => {
     return marketSection
 }
 
-const createActivitySection = (state: GameState): HTMLElement => {
+const createActivitySection = (state: LegacyGameState): HTMLElement => {
     const activitySection = createElement("div", "panel-section")
     const activityTitle = createElement("h3", undefined, "Recent Activity")
     const activityLog = createElement("div", "activity-log")
@@ -55,7 +55,7 @@ const createActivitySection = (state: GameState): HTMLElement => {
     return activitySection
 }
 
-export const createActionPanel = (state: GameState): HTMLElement => {
+export const createActionPanel = (state: LegacyGameState): HTMLElement => {
     const actionPanel = createElement("div", "action-panel")
     
     actionPanel.appendChild(createPropertyDetailsSection())

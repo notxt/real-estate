@@ -1,25 +1,25 @@
-import type { GameState } from '../main.js'
+import type { LegacyGameState } from '../main.js'
 import { createElement, formatCurrency } from '../util.js'
 
-const createPlayerDisplay = (state: GameState): HTMLElement => {
+const createPlayerDisplay = (state: LegacyGameState): HTMLElement => {
     const playerSpan = createElement("span")
     playerSpan.innerHTML = `Player: <strong id="player-name">${state.playerName}</strong>`
     return playerSpan
 }
 
-const createCashDisplay = (state: GameState): HTMLElement => {
+const createCashDisplay = (state: LegacyGameState): HTMLElement => {
     const cashDisplay = createElement("div", "cash-display")
     cashDisplay.innerHTML = `Cash: $<span id="cash-amount">${formatCurrency(state.cash)}</span>`
     return cashDisplay
 }
 
-const createTurnCounter = (state: GameState): HTMLElement => {
+const createTurnCounter = (state: LegacyGameState): HTMLElement => {
     const turnCounter = createElement("div", "turn-counter")
     turnCounter.innerHTML = `Turn: <span id="turn-number">${state.turnNumber.toString()}</span>`
     return turnCounter
 }
 
-const createPlayerInfo = (state: GameState): HTMLElement => {
+const createPlayerInfo = (state: LegacyGameState): HTMLElement => {
     const playerInfo = createElement("div", "player-info")
     
     playerInfo.appendChild(createPlayerDisplay(state))
@@ -44,7 +44,7 @@ const createHeaderButtons = (): HTMLElement => {
     return headerRight
 }
 
-export const createHeaderBar = (state: GameState): HTMLElement => {
+export const createHeaderBar = (state: LegacyGameState): HTMLElement => {
     const header = createElement("header", "header-bar")
     
     const headerLeft = createElement("div", "header-left")
