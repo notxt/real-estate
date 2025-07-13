@@ -1,8 +1,8 @@
-import { createHeaderBar } from './component/headerBar'
-import { createCentralArea } from './component/centralArea'
-import { createActionPanel } from './component/actionPanel'
-import { createFooterBar, getActionStatusText } from './component/footerBar'
-import { createElement, formatCurrency } from './util'
+import { createHeaderBar } from './component/headerBar.js'
+import { createCentralArea } from './component/centralArea.js'
+import { createActionPanel } from './component/actionPanel.js'
+import { createFooterBar, getActionStatusText } from './component/footerBar.js'
+import { createElement, formatCurrency } from './util.js'
 import { 
     handleSettingsClick, 
     handleHelpClick, 
@@ -15,7 +15,7 @@ import {
     handleZoomOutClick,
     handleCenterViewClick,
     handleWindowResize
-} from './eventHandlers'
+} from './eventHandlers.js'
 
 export type Property = {
     id: string

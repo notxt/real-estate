@@ -1,6 +1,6 @@
-import type { GameState } from '../main'
-import { createElement } from '../util'
-import { actionButtonConfigs, createActionButton } from './actionHelpers'
+import type { GameState } from '../main.js'
+import { createElement } from '../util.js'
+import { actionButtonConfigs, createActionButton } from './actionHelpers.js'
 
 const createPropertyDetailsSection = (): HTMLElement => {
     const propertyDetails = createElement("div", "panel-section property-details")

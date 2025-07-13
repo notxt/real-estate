@@ -1,5 +1,5 @@
-import type { GameState } from '../main'
-import { createElement, formatCurrency } from '../util'
+import type { GameState } from '../main.js'
+import { createElement, formatCurrency } from '../util.js'
 
 const createPlayerDisplay = (state: GameState): HTMLElement => {
     const playerSpan = createElement("span")

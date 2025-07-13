@@ -1,4 +1,4 @@
-import { createElement } from '../util'
+import { createElement } from '../util.js'
 
 type ActionButtonConfig = {
     id: string

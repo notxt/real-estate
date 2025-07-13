@@ -1,4 +1,4 @@
-import type { GameState } from './main'
+import type { GameState } from './main.js'
 
 export const addActivityLog = (state: GameState, message: string): GameState => {
     const newLog = [message, ...state.activityLog].slice(0, 5)

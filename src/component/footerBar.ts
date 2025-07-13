@@ -1,5 +1,5 @@
-import type { GameState } from '../main'
-import { createElement } from '../util'
+import type { GameState } from '../main.js'
+import { createElement } from '../util.js'
 
 export const getActionStatusText = (state: GameState): string => {
     if (state.selectedProperty) {

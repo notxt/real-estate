@@ -1,4 +1,4 @@
-import { createElement } from '../util'
+import { createElement } from '../util.js'
 
 const createGridPlaceholder = (): HTMLElement => {
     const gridPlaceholder = createElement("div", "grid-placeholder")
