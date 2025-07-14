@@ -39,6 +39,7 @@ body {
     font-family: system-ui, -apple-system, sans-serif;
     background-color: var(--color-background);
     min-height: 100vh;
+    margin: 0;
     display: grid;
     grid-template-rows: var(--header-height) 1fr var(--footer-height);
     grid-template-areas:
@@ -116,7 +117,8 @@ main {
     margin: 0 auto;
     width: 100%;
     min-height: 0;
-    overflow: hidden;
+    height: calc(100vh - var(--header-height) - var(--footer-height) - 2rem);
+    overflow: visible;
 }
 
 /* Central Game Area */
@@ -124,12 +126,14 @@ main {
     grid-area: central;
     background-color: var(--color-white);
     border-radius: var(--border-radius-lg);
-    padding: var(--spacing-xl);
+    padding: var(--spacing-md);
     box-shadow: var(--shadow);
     display: grid;
     grid-template-rows: auto 1fr auto;
-    gap: var(--spacing-md);
+    gap: var(--spacing-sm);
     min-height: 0;
+    height: 100%;
+    overflow: visible;
 }
 
 .central-area h2 {
@@ -149,7 +153,8 @@ main {
     min-height: 0;
     flex: 1;
     aspect-ratio: 20/15;
-    max-height: 70vh;
+    height: calc(100% - 100px);
+    overflow: hidden;
 }
 
 .grid-cell {
@@ -159,7 +164,7 @@ main {
     position: relative;
     cursor: pointer;
     transition: all 0.2s ease;
-    min-height: 30px;
+    min-height: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -290,26 +295,32 @@ main {
     display: flex;
     justify-content: space-between;
     gap: var(--spacing-sm);
+    flex-shrink: 0;
+    padding: var(--spacing-sm) 0;
+    height: 40px;
+    align-items: center;
 }
 
 /* Action Panel */
 .action-panel {
     grid-area: actions;
     display: grid;
-    grid-template-rows: 2fr 1.5fr 0.5fr 1.5fr;
-    gap: var(--spacing-sm);
+    grid-template-rows: 2fr 1.2fr 0.4fr 1fr;
+    gap: var(--spacing-xs);
     min-height: 0;
+    height: 100%;
+    overflow: visible;
 }
 
 .panel-section {
     background-color: var(--color-white);
     border-radius: var(--border-radius-lg);
-    padding: var(--spacing-lg);
+    padding: var(--spacing-sm);
     box-shadow: var(--shadow);
     display: flex;
     flex-direction: column;
     min-height: 0;
-    overflow: hidden;
+    overflow-y: auto;
 }
 
 .panel-section h3 {

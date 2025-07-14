@@ -85,3 +85,7 @@ tail -f log/dev.log     # Server logs
 
 - Leave comments for yourself using easily searchable tags so you can quickly navigate files
 - Use unique, descriptive tags like `// @NAVIGATION:` or `// @TODO:` to mark important sections or notes for later reference
+
+## Project Organization
+
+- Put debug scripts and images in the `debug/` folder
