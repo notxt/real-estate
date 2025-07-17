@@ -150,16 +150,19 @@ test.describe('Property Grid Interactive Display', () => {
   test('should synchronize grid state with game state', async ({ page }) => {
     await page.goto('/');
     
-    // Select a property
-    const property = page.locator('.grid-cell').first();
+    // Select a specific property by coordinates
+    const property = page.locator('.grid-cell[data-x="0"][data-y="0"]');
     await property.click();
+    
+    // Wait for selection to be processed
+    await expect(property).toHaveClass(/selected/);
     
     // Perform next turn action
     const nextTurnBtn = page.locator('#next-turn-btn');
     await nextTurnBtn.click();
     
     // Grid selection should persist through game state changes - re-query after state change
-    const selectedProperty = page.locator('.grid-cell').first();
+    const selectedProperty = page.locator('.grid-cell[data-x="0"][data-y="0"]');
     await expect(selectedProperty).toHaveClass(/selected/);
     
     // Activity log should show property selection
