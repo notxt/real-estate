@@ -8,7 +8,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: process.env.CI ? 'dot' : [['list'], ['html', { open: 'never' }]],
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL: 'http://localhost:3001',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
@@ -23,7 +23,7 @@ export default defineConfig({
 
   webServer: {
     command: 'npm start',
-    url: 'http://localhost:3000',
+    url: 'http://localhost:3001',
     reuseExistingServer: true,
   },
 });

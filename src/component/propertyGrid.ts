@@ -100,7 +100,9 @@ const handleKeyNavigation = (
     // Focus on the first cell after selection
     setTimeout(() => {
       const firstCell = gridElement.querySelector('.grid-cell[data-x="0"][data-y="0"]')
-      firstCell?.focus()
+      if (firstCell instanceof HTMLElement) {
+        firstCell.focus()
+      }
     }, 0)
     return
   }
@@ -119,8 +121,10 @@ const handleKeyNavigation = (
     onPropertySelect(targetProperty.id)
     // Focus on the target cell after selection
     setTimeout(() => {
-      const targetCell = gridElement.querySelector(`.grid-cell[data-x="${newPosition.x.toString()}"][data-y="${newPosition.y.toString()}"]`) as HTMLElement | null
-      targetCell?.focus()
+      const targetCell = gridElement.querySelector(`.grid-cell[data-x="${newPosition.x.toString()}"][data-y="${newPosition.y.toString()}"]`)
+      if (targetCell instanceof HTMLElement) {
+        targetCell.focus()
+      }
     }, 0)
   }
   
@@ -210,13 +214,17 @@ export const createPropertyGrid = (gameState: GameState, onPropertySelect: (prop
     if (gameState.selectedProperty === null) {
       selectFirstProperty(gameState.properties, onPropertySelect)
       setTimeout(() => {
-        const firstCell = gridContainer.querySelector('.grid-cell[data-x="0"][data-y="0"]') as HTMLElement | null
-        firstCell?.focus()
+        const firstCell = gridContainer.querySelector('.grid-cell[data-x="0"][data-y="0"]')
+        if (firstCell instanceof HTMLElement) {
+          firstCell.focus()
+        }
       }, 0)
     } else {
       // Focus on the currently selected property
-      const selectedCell = gridContainer.querySelector(`.grid-cell[data-property-id="${gameState.selectedProperty.id}"]`) as HTMLElement | null
-      selectedCell?.focus()
+      const selectedCell = gridContainer.querySelector(`.grid-cell[data-property-id="${gameState.selectedProperty.id}"]`)
+      if (selectedCell instanceof HTMLElement) {
+        selectedCell.focus()
+      }
     }
   })
   
