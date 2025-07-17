@@ -158,8 +158,9 @@ test.describe('Property Grid Interactive Display', () => {
     const nextTurnBtn = page.locator('#next-turn-btn');
     await nextTurnBtn.click();
     
-    // Grid selection should persist through game state changes
-    await expect(property).toHaveClass(/selected/);
+    // Grid selection should persist through game state changes - re-query after state change
+    const selectedProperty = page.locator('.grid-cell').first();
+    await expect(selectedProperty).toHaveClass(/selected/);
     
     // Activity log should show property selection
     const activityLog = page.locator('#activity-log');
