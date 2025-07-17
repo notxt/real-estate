@@ -93,10 +93,15 @@ const calculateNewPosition = (key: string, currentX: number, currentY: number): 
 const handleKeyNavigation = (
   event: KeyboardEvent, 
   gameState: GameState, 
-  onPropertySelect: (propertyId: PropertyId) => void
-): void => {
+  gridElement: HTMLElement
+) => (onPropertySelect: (propertyId: PropertyId) => void): void => {
   if (gameState.selectedProperty === null) {
     selectFirstProperty(gameState.properties, onPropertySelect)
+    // Focus on the first cell after selection
+    setTimeout(() => {
+      const firstCell = gridElement.querySelector('.grid-cell[data-x="0"][data-y="0"]')
+      firstCell?.focus()
+    }, 0)
     return
   }
   
@@ -112,6 +117,11 @@ const handleKeyNavigation = (
   
   if (targetProperty !== undefined) {
     onPropertySelect(targetProperty.id)
+    // Focus on the target cell after selection
+    setTimeout(() => {
+      const targetCell = gridElement.querySelector(`.grid-cell[data-x="${newPosition.x.toString()}"][data-y="${newPosition.y.toString()}"]`) as HTMLElement | null
+      targetCell?.focus()
+    }, 0)
   }
   
   event.preventDefault()
@@ -192,7 +202,22 @@ export const createPropertyGrid = (gameState: GameState, onPropertySelect: (prop
   }
   
   gridContainer.addEventListener('keydown', (event) => {
-    handleKeyNavigation(event, gameState, onPropertySelect)
+    handleKeyNavigation(event, gameState, gridContainer)(onPropertySelect)
+  })
+  
+  gridContainer.addEventListener('focus', () => {
+    // If no property is selected when grid gains focus, select the first one
+    if (gameState.selectedProperty === null) {
+      selectFirstProperty(gameState.properties, onPropertySelect)
+      setTimeout(() => {
+        const firstCell = gridContainer.querySelector('.grid-cell[data-x="0"][data-y="0"]') as HTMLElement | null
+        firstCell?.focus()
+      }, 0)
+    } else {
+      // Focus on the currently selected property
+      const selectedCell = gridContainer.querySelector(`.grid-cell[data-property-id="${gameState.selectedProperty.id}"]`) as HTMLElement | null
+      selectedCell?.focus()
+    }
   })
   
   return gridContainer
