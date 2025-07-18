@@ -64,6 +64,30 @@ export type MarketConditions = {
   interestRate: number
 }
 
+// @TRANSACTIONS: Financial transaction types
+export type TransactionType = 'purchase' | 'sale' | 'income' | 'expense' | 'transfer'
+
+export type Transaction = {
+  id: string
+  playerId: PlayerId
+  type: TransactionType
+  amount: number
+  description: string
+  timestamp: Date
+  relatedPropertyId?: PropertyId
+}
+
+export type TransactionData = {
+  type: TransactionType
+  amount: number
+  description: string
+  relatedPropertyId?: PropertyId
+}
+
+
+// @RESULTS: Error handling types
+export type MoneyResult<T> = Error | T
+
 // @ENTITIES: Core game entity types
 export type Property = {
   id: PropertyId
@@ -83,8 +107,30 @@ export type Player = {
   cash: number
   netWorth: number
   properties: PropertyId[]
+  transactionHistory: Transaction[]
   isAI: boolean
   strategy: AIStrategy
+}
+
+// @FINANCIAL: Financial operation types
+export type PropertyPurchase = {
+  transaction: Transaction
+  property: Property
+  player: Player
+}
+
+export type PropertyTransfer = {
+  transaction: Transaction
+  property: Property
+  fromPlayer: Player | null
+  toPlayer: Player | null
+}
+
+export type FinancialState = {
+  players: Player[]
+  totalCash: number
+  totalPropertyValue: number
+  marketCap: number
 }
 
 // @ACTIONS: Player action types

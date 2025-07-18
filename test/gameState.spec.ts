@@ -9,7 +9,7 @@ test.describe('Game State Management', () => {
     await expect(playerName).toHaveText('Property Mogul');
     
     const cashAmount = page.locator('#cash-amount');
-    await expect(cashAmount).toHaveText('100,000');
+    await expect(cashAmount).toHaveText('750,000');
     
     const turnNumber = page.locator('#turn-number');
     await expect(turnNumber).toHaveText('1');

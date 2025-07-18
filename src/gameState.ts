@@ -6,9 +6,10 @@ import { GamePhase, PropertyType, DevelopmentLevel, AIStrategy } from './types.j
 export const createInitialPlayer = (): Player => ({
   id: 'player1',
   name: 'Property Mogul',
-  cash: 100000,
-  netWorth: 100000,
+  cash: 750000,
+  netWorth: 750000,
   properties: [],
+  transactionHistory: [],
   isAI: false,
   strategy: AIStrategy.Balanced
 })
@@ -135,6 +136,7 @@ export const updatePlayerCash = (gameState: GameState, playerId: PlayerId, amoun
     cash: newCash,
     netWorth: calculateNetWorth({ ...player, cash: newCash }, gameState.properties),
     properties: player.properties,
+    transactionHistory: player.transactionHistory,
     isAI: player.isAI,
     strategy: player.strategy
   }
@@ -163,6 +165,7 @@ const removePropertyFromPlayer = (players: Player[], playerId: PlayerId, propert
         cash: player.cash,
         properties: filteredProperties,
         netWorth: player.netWorth,
+        transactionHistory: player.transactionHistory,
         isAI: player.isAI,
         strategy: player.strategy
       }
@@ -189,6 +192,7 @@ const addPropertyToPlayer = (players: Player[], playerId: PlayerId, propertyId: 
       cash: player.cash,
       properties: newProperties,
       netWorth: player.netWorth,
+      transactionHistory: player.transactionHistory,
       isAI: player.isAI,
       strategy: player.strategy
     }

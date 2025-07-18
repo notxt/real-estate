@@ -1,6 +1,8 @@
 // @HANDLERS: Game event handlers for user interactions
 import type { GameState } from './types.js'
 import { addToActivityLog, advanceTurn } from './gameState.js'
+import { processTransaction } from './financial.js'
+import { purchaseProperty, sellProperty } from './propertyTransactions.js'
 
 // @HELPERS: State update helpers
 const addActivityLogToState = (state: GameState, message: string): GameState => {
@@ -18,21 +20,75 @@ export const handleHelpClick = (state: GameState): GameState => {
 
 // @ACTIONS: Property action handlers
 export const handleBuyClick = (state: GameState): GameState => {
-    return addActivityLogToState(state, "Attempting to buy property...")
+    if (!state.selectedProperty) {
+        return addActivityLogToState(state, "Error: No property selected for purchase")
+    }
+    
+    const currentPlayer = state.players[0]
+    if (!currentPlayer) {
+        return addActivityLogToState(state, "Error: No active player found")
+    }
+    
+    const result = purchaseProperty(state, currentPlayer.id, state.selectedProperty.id)
+    if (result instanceof Error) {
+        return addActivityLogToState(state, `Purchase failed: ${result.message}`)
+    }
+    
+    const logMessage = `${currentPlayer.name} purchased ${result.purchase.property.name} for $${result.purchase.property.value.toLocaleString()}`
+    return addActivityLogToState(result.gameState, logMessage)
 }
 
 export const handleDevelopClick = (state: GameState): GameState => {
-    if (state.selectedProperty) {
-        return addActivityLogToState(state, `Developing ${state.selectedProperty.name}`)
+    if (!state.selectedProperty) {
+        return addActivityLogToState(state, "Error: No property selected for development")
     }
-    return state
+    
+    const currentPlayer = state.players[0]
+    if (!currentPlayer) {
+        return addActivityLogToState(state, "Error: No active player found")
+    }
+    
+    if (state.selectedProperty.owner !== currentPlayer.id) {
+        return addActivityLogToState(state, "Error: Cannot develop property you don't own")
+    }
+    
+    const developmentCost = state.selectedProperty.developmentCost
+    const result = processTransaction(state, currentPlayer.id, {
+        type: 'expense',
+        amount: developmentCost,
+        description: `Development of ${state.selectedProperty.name}`,
+        relatedPropertyId: state.selectedProperty.id
+    })
+    
+    if (result instanceof Error) {
+        return addActivityLogToState(state, `Development failed: ${result.message}`)
+    }
+    
+    const logMessage = `${currentPlayer.name} developed ${state.selectedProperty.name} for $${developmentCost.toLocaleString()}`
+    return addActivityLogToState(result.gameState, logMessage)
 }
 
 export const handleSellClick = (state: GameState): GameState => {
-    if (state.selectedProperty) {
-        return addActivityLogToState(state, `Selling ${state.selectedProperty.name}`)
+    if (!state.selectedProperty) {
+        return addActivityLogToState(state, "Error: No property selected for sale")
     }
-    return state
+    
+    const currentPlayer = state.players[0]
+    if (!currentPlayer) {
+        return addActivityLogToState(state, "Error: No active player found")
+    }
+    
+    if (state.selectedProperty.owner !== currentPlayer.id) {
+        return addActivityLogToState(state, "Error: Cannot sell property you don't own")
+    }
+    
+    const result = sellProperty(state, currentPlayer.id, state.selectedProperty.id)
+    if (result instanceof Error) {
+        return addActivityLogToState(state, `Sale failed: ${result.message}`)
+    }
+    
+    const logMessage = `${currentPlayer.name} sold ${state.selectedProperty.name} for $${result.sale.transaction.amount.toLocaleString()}`
+    return addActivityLogToState(result.gameState, logMessage)
 }
 
 export const handlePassClick = (state: GameState): GameState => {
