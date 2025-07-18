@@ -11,7 +11,7 @@ TypeScript web game, single-page app with Node.js dev server. Setup complete, ba
 **Development (run these first):**
 ```bash
 mkdir -p log && ./bin/watch > log/watch.log 2>&1 &  # TypeScript compilation
-mkdir -p log && ./bin/dev > log/dev.log 2>&1 &      # Dev server on :3000
+mkdir -p log && ./bin/dev > log/dev.log 2>&1 &      # Dev server on :3001
 ```
 
 **Main commands:**
@@ -34,7 +34,7 @@ tail -f log/dev.log     # Server logs
 **Source → Build:**
 - `src/main.ts` → `js/main.js` (watch mode compiles automatically)
 - `index.html` loads compiled JS
-- `server.js` serves static files on localhost:3000
+- `server.js` serves static files on localhost:3001
 
 **Critical rules:**
 - ESLint checks `src/` only with strictest TypeScript rules
@@ -58,13 +58,14 @@ tail -f log/dev.log     # Server logs
 
 **Testing:**
 - Chrome-only Playwright tests (fast)
-- Tests reuse existing server on :3000
+- Tests reuse existing server on :3001
 - No unit tests - only e2e through browser
 
 ## Workflow
 
 **After each task:** Commit and push changes
 **PR size:** Keep under 20 files, single purpose
+- After creating or updating a PR. Make sure CI is passing
 
 ## Code Design Principles
 
@@ -85,3 +86,7 @@ tail -f log/dev.log     # Server logs
 
 - Leave comments for yourself using easily searchable tags so you can quickly navigate files
 - Use unique, descriptive tags like `// @NAVIGATION:` or `// @TODO:` to mark important sections or notes for later reference
+
+## Project Organization
+
+- Put debug scripts and images in the `debug/` folder

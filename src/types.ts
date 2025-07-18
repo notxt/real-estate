@@ -40,6 +40,22 @@ export type GridPosition = {
   y: number
 }
 
+// @GRID: Property grid system types
+export type PropertyCell = {
+  x: number
+  y: number
+  propertyId: PropertyId
+  isSelectable: boolean
+  isVisible: boolean
+}
+
+export type PropertyGrid = {
+  width: number
+  height: number
+  cells: PropertyCell[]
+  selectedProperty: PropertyId | null
+}
+
 // @MARKET: Market and economic types
 export type MarketConditions = {
   trend: 'rising' | 'falling' | 'stable'
