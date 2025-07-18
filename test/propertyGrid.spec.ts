@@ -99,16 +99,21 @@ test.describe('Property Grid Interactive Display', () => {
     const propertyGrid = page.locator('.property-grid');
     await propertyGrid.focus();
     
-    // Press arrow key to navigate
+    // Should initially select first property when grid is focused
+    await expect(page.locator('.grid-cell.selected')).toHaveCount(1);
+    const initialSelected = page.locator('.grid-cell[data-x="0"][data-y="0"]');
+    await expect(initialSelected).toHaveClass(/selected/);
+    
+    // Press arrow key to navigate right
     await page.keyboard.press('ArrowRight');
     
-    // Should move focus to next property
-    const focusedProperty = page.locator('.grid-cell:focus');
-    await expect(focusedProperty).toBeVisible();
+    // Should move selection to next property
+    const nextSelected = page.locator('.grid-cell[data-x="1"][data-y="0"]');
+    await expect(nextSelected).toHaveClass(/selected/);
     
-    // Should be able to select with Enter/Space
+    // Should be able to confirm selection with Enter/Space
     await page.keyboard.press('Enter');
-    await expect(focusedProperty).toHaveClass(/selected/);
+    await expect(nextSelected).toHaveClass(/selected/);
   });
 
   test('should update action panel when property is selected', async ({ page }) => {
