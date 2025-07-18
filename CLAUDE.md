@@ -77,6 +77,7 @@ tail -f log/dev.log     # Server logs
 - Don't use optional properties in TypeScript
 - Prefer null over undefined
 - Prefer early returns over optional chaining
+- Don't use global variables
 
 ## Development Philosophy
 
@@ -90,3 +91,7 @@ tail -f log/dev.log     # Server logs
 ## Project Organization
 
 - Put debug scripts and images in the `debug/` folder
+
+## Typescript Best Practices
+
+- Don't use `any` in TypeScript

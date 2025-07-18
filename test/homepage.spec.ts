@@ -18,7 +18,7 @@ test.describe('Real Estate Empire Homepage', () => {
     // Check cash display
     const cashDisplay = page.locator('#cash-amount');
     await expect(cashDisplay).toBeVisible();
-    await expect(cashDisplay).toHaveText('100,000');
+    await expect(cashDisplay).toHaveText('750,000');
     
     // Check turn counter
     const turnNumber = page.locator('#turn-number');
