@@ -204,6 +204,86 @@ const updatePropertyGrid = (gameState: GameState, handlePropertySelect: (propert
     updatePropertyGridComponent(gridElement, gameState, handlePropertySelect)
 }
 
+// @KEYBOARD: Grid keyboard navigation helpers
+const selectFirstPropertyIfNone = (currentState: GameState, handlePropertySelect: (propertyId: PropertyId) => void, gridElement: HTMLElement): void => {
+    const firstProperty = currentState.properties.find(p => p.position.x === 0 && p.position.y === 0)
+    if (firstProperty) {
+        handlePropertySelect(firstProperty.id)
+        setTimeout(() => {
+            const firstCell = gridElement.querySelector('.grid-cell[data-x="0"][data-y="0"]')
+            if (firstCell instanceof HTMLElement) {
+                firstCell.focus()
+            }
+        }, 0)
+    }
+}
+
+const calculateNewPositionFromArrowKey = (key: string, currentX: number, currentY: number): { x: number, y: number } | null => {
+    let newX = currentX
+    let newY = currentY
+    
+    if (key === 'ArrowLeft') {
+        newX = Math.max(0, newX - 1)
+    } else if (key === 'ArrowRight') {
+        newX = Math.min(19, newX + 1)
+    } else if (key === 'ArrowUp') {
+        newY = Math.max(0, newY - 1)
+    } else if (key === 'ArrowDown') {
+        newY = Math.min(14, newY + 1)
+    } else {
+        return null // Not an arrow key
+    }
+    
+    return { x: newX, y: newY }
+}
+
+const setupGridKeyboardNavigation = (getCurrentState: () => GameState, _updateState: (newState: GameState) => void, handlePropertySelect: (propertyId: PropertyId) => void): void => {
+    const gridElement = document.querySelector('.property-grid')
+    if (!(gridElement instanceof HTMLElement)) {
+        return
+    }
+    
+    gridElement.addEventListener('keydown', (event) => {
+        const currentState = getCurrentState()
+        if (currentState.selectedProperty === null) {
+            selectFirstPropertyIfNone(currentState, handlePropertySelect, gridElement)
+            return
+        }
+        
+        const selectedProperty = currentState.selectedProperty
+        
+        if (event.key === 'Enter' || event.key === ' ') {
+            handlePropertySelect(selectedProperty.id)
+            return
+        }
+        
+        const newPosition = calculateNewPositionFromArrowKey(event.key, selectedProperty.position.x, selectedProperty.position.y)
+        if (!newPosition) {
+            return
+        }
+        
+        const targetProperty = currentState.properties.find(p => p.position.x === newPosition.x && p.position.y === newPosition.y)
+        if (targetProperty) {
+            handlePropertySelect(targetProperty.id)
+            setTimeout(() => {
+                const targetCell = gridElement.querySelector(`.grid-cell[data-x="${newPosition.x.toString()}"][data-y="${newPosition.y.toString()}"]`)
+                if (targetCell instanceof HTMLElement) {
+                    targetCell.focus()
+                }
+            }, 0)
+        }
+        
+        event.preventDefault()
+    })
+    
+    gridElement.addEventListener('focus', () => {
+        const currentState = getCurrentState()
+        if (currentState.selectedProperty === null) {
+            selectFirstPropertyIfNone(currentState, handlePropertySelect, gridElement)
+        }
+    })
+}
+
 // @SELECTION: Property selection handler
 const createPropertySelectHandler = (getCurrentState: () => GameState, updateState: (newState: GameState) => void) => {
     return (propertyId: PropertyId): void => {
@@ -254,6 +334,7 @@ const initializeGame = (): void => {
     app.appendChild(ui)
     
     setupEventListeners(() => gameState, updateState)
+    setupGridKeyboardNavigation(() => gameState, updateState, handlePropertySelect)
     
     const validation = validateGameState(gameState)
     if (validation instanceof Error) {
