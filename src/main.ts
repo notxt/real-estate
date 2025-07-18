@@ -161,34 +161,34 @@ const addClickListener = (id: string, handler: () => void): void => {
 }
 
 // @EVENTS: Event listener setup
-const setupHeaderListeners = (state: GameState, updateState: (newState: GameState) => void): void => {
-    addClickListener("settings-btn", () => { updateState(handleSettingsClick(state)) })
-    addClickListener("help-btn", () => { updateState(handleHelpClick(state)) })
+const setupHeaderListeners = (getCurrentState: () => GameState, updateState: (newState: GameState) => void): void => {
+    addClickListener("settings-btn", () => { updateState(handleSettingsClick(getCurrentState())) })
+    addClickListener("help-btn", () => { updateState(handleHelpClick(getCurrentState())) })
 }
 
-const setupActionListeners = (state: GameState, updateState: (newState: GameState) => void): void => {
-    addClickListener("buy-btn", () => { updateState(handleBuyClick(state)) })
-    addClickListener("develop-btn", () => { updateState(handleDevelopClick(state)) })
-    addClickListener("sell-btn", () => { updateState(handleSellClick(state)) })
-    addClickListener("pass-btn", () => { updateState(handlePassClick(state)) })
-    addClickListener("next-turn-btn", () => { updateState(handleNextTurnClick(state)) })
+const setupActionListeners = (getCurrentState: () => GameState, updateState: (newState: GameState) => void): void => {
+    addClickListener("buy-btn", () => { updateState(handleBuyClick(getCurrentState())) })
+    addClickListener("develop-btn", () => { updateState(handleDevelopClick(getCurrentState())) })
+    addClickListener("sell-btn", () => { updateState(handleSellClick(getCurrentState())) })
+    addClickListener("pass-btn", () => { updateState(handlePassClick(getCurrentState())) })
+    addClickListener("next-turn-btn", () => { updateState(handleNextTurnClick(getCurrentState())) })
 }
 
-const setupGridListeners = (state: GameState, updateState: (newState: GameState) => void): void => {
-    addClickListener("zoom-in", () => { updateState(handleZoomInClick(state)) })
-    addClickListener("zoom-out", () => { updateState(handleZoomOutClick(state)) })
-    addClickListener("center-view", () => { updateState(handleCenterViewClick(state)) })
+const setupGridListeners = (getCurrentState: () => GameState, updateState: (newState: GameState) => void): void => {
+    addClickListener("zoom-in", () => { updateState(handleZoomInClick(getCurrentState())) })
+    addClickListener("zoom-out", () => { updateState(handleZoomOutClick(getCurrentState())) })
+    addClickListener("center-view", () => { updateState(handleCenterViewClick(getCurrentState())) })
 }
 
-const setupEventListeners = (state: GameState, updateState: (newState: GameState) => void): void => {
-    setupHeaderListeners(state, updateState)
-    setupActionListeners(state, updateState)
-    setupGridListeners(state, updateState)
+const setupEventListeners = (getCurrentState: () => GameState, updateState: (newState: GameState) => void): void => {
+    setupHeaderListeners(getCurrentState, updateState)
+    setupActionListeners(getCurrentState, updateState)
+    setupGridListeners(getCurrentState, updateState)
     
     window.addEventListener("resize", () => {
         const width = window.innerWidth
         const height = window.innerHeight
-        updateState(handleWindowResize(state, width, height))
+        updateState(handleWindowResize(getCurrentState(), width, height))
     })
 }
 
@@ -253,7 +253,7 @@ const initializeGame = (): void => {
     const ui = createGameUI(gameState, handlePropertySelect)
     app.appendChild(ui)
     
-    setupEventListeners(gameState, updateState)
+    setupEventListeners(() => gameState, updateState)
     
     const validation = validateGameState(gameState)
     if (validation instanceof Error) {
